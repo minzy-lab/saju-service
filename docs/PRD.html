@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>운명 API - 기획서</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap');
+
+    :root {
+      --primary: #6C3CE1;
+      --primary-light: #8B5CF6;
+      --primary-bg: #F5F0FF;
+      --accent: #F59E0B;
+      --accent-bg: #FFFBEB;
+      --dark: #1E1B4B;
+      --text: #374151;
+      --text-light: #6B7280;
+      --border: #E5E7EB;
+      --bg: #FAFAFA;
+      --white: #FFFFFF;
+      --success: #10B981;
+      --info: #3B82F6;
+      --fire: #EF4444;
+      --water: #3B82F6;
+      --earth: #A16207;
+      --wind: #059669;
+      --wood: #22C55E;
+      --metal: #9CA3AF;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Noto Sans KR', -apple-system, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.7;
+    }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, #1E1B4B 0%, #4C1D95 50%, #6D28D9 100%);
+      color: white;
+      padding: 80px 24px 60px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+    .hero h1 {
+      font-size: 48px;
+      font-weight: 900;
+      margin-bottom: 12px;
+      letter-spacing: -1px;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero .subtitle {
+      font-size: 18px;
+      font-weight: 300;
+      opacity: 0.85;
+      max-width: 600px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+    .hero-tags {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .hero-tag {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 4px 14px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    /* Container */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Nav */
+    .toc {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      margin: -30px auto 40px;
+      position: relative;
+      z-index: 10;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    }
+    .toc h3 {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--text-light);
+      margin-bottom: 16px;
+    }
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px;
+    }
+    .toc a {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: 8px;
+      transition: all 0.2s;
+      display: block;
+    }
+    .toc a:hover {
+      background: var(--primary-bg);
+    }
+
+    /* Section */
+    section {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    section h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    section h2 .num {
+      background: var(--primary);
+      color: white;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    section h3 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--dark);
+      margin: 24px 0 12px;
+    }
+    section p {
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    /* Info Cards */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      margin: 16px 0;
+    }
+    .info-card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .info-card .label {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+    .info-card .value {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--dark);
+    }
+    .info-card .desc {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+
+    /* Table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 14px;
+    }
+    thead th {
+      background: var(--dark);
+      color: white;
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 500;
+      font-size: 13px;
+    }
+    thead th:first-child { border-radius: 8px 0 0 0; }
+    thead th:last-child { border-radius: 0 8px 0 0; }
+    tbody td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    tbody tr:hover { background: #F9FAFB; }
+    tbody tr:last-child td { border-bottom: none; }
+
+    /* Module Cards */
+    .module-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 16px 0;
+      border-left: 4px solid var(--primary);
+      background: var(--white);
+    }
+    .module-card.fire { border-left-color: var(--fire); }
+    .module-card.water { border-left-color: var(--water); }
+    .module-card.earth { border-left-color: var(--earth); }
+    .module-card.wind { border-left-color: var(--wind); }
+    .module-card.wood { border-left-color: var(--wood); }
+    .module-card.metal { border-left-color: var(--metal); }
+    .module-card.accent { border-left-color: var(--accent); }
+
+    .module-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .module-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+    .module-card.fire .module-icon { background: #FEE2E2; }
+    .module-card.water .module-icon { background: #DBEAFE; }
+    .module-card.earth .module-icon { background: #FEF3C7; }
+    .module-card.wind .module-icon { background: #D1FAE5; }
+    .module-card.wood .module-icon { background: #DCFCE7; }
+    .module-card.metal .module-icon { background: #F3F4F6; }
+    .module-card.accent .module-icon { background: #FEF3C7; }
+    .module-card .module-icon { background: #EDE9FE; }
+
+    .module-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--dark);
+    }
+    .module-subtitle {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+    .module-table {
+      width: 100%;
+      font-size: 13px;
+    }
+    .module-table td {
+      padding: 6px 0;
+      vertical-align: top;
+    }
+    .module-table td:first-child {
+      font-weight: 600;
+      color: var(--dark);
+      width: 60px;
+    }
+
+    /* Flow */
+    .flow {
+      background: linear-gradient(135deg, #F5F0FF, #EDE9FE);
+      border-radius: 12px;
+      padding: 32px;
+      margin: 16px 0;
+      text-align: center;
+    }
+    .flow-step {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--white);
+      padding: 10px 18px;
+      border-radius: 10px;
+      margin: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(108,60,225,0.1);
+      border: 1px solid rgba(108,60,225,0.1);
+    }
+    .flow-arrow {
+      display: inline-block;
+      color: var(--primary);
+      font-size: 20px;
+      margin: 6px 4px;
+      vertical-align: middle;
+    }
+    .flow-branch {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 16px 0;
+    }
+
+    /* API */
+    .api-endpoint {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin: 12px 0;
+      overflow: hidden;
+    }
+    .api-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .api-method {
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      color: white;
+    }
+    .api-method.get { background: var(--success); }
+    .api-method.post { background: var(--info); }
+    .api-path {
+      font-family: monospace;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--dark);
+    }
+    .api-desc {
+      font-size: 13px;
+      color: var(--text-light);
+      margin-left: auto;
+    }
+    .api-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .api-badge.free { background: #D1FAE5; color: #065F46; }
+    .api-badge.key { background: #FEF3C7; color: #92400E; }
+
+    /* Code */
+    .code-block {
+      background: #1E1B4B;
+      border-radius: 10px;
+      padding: 20px;
+      margin: 12px 0;
+      overflow-x: auto;
+    }
+    .code-block pre {
+      color: #E2E8F0;
+      font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+      font-size: 12.5px;
+      line-height: 1.6;
+      white-space: pre;
+    }
+    .code-block .key { color: #93C5FD; }
+    .code-block .str { color: #86EFAC; }
+    .code-block .num { color: #FCA5A5; }
+    .code-block .comment { color: #6B7280; font-style: italic; }
+
+    /* Tech Stack */
+    .tech-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+    .tech-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+    .tech-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .tech-name {
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--dark);
+    }
+    .tech-reason {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+
+    /* Checklist */
+    .checklist {
+      list-style: none;
+      margin: 12px 0;
+    }
+    .checklist li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .check {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 12px;
+    }
+    .check.done {
+      background: var(--success);
+      border-color: var(--success);
+      color: white;
+    }
+
+    /* Timeline */
+    .timeline {
+      margin: 16px 0;
+    }
+    .timeline-item {
+      display: flex;
+      gap: 16px;
+      padding: 12px 0;
+    }
+    .timeline-num {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--primary-bg);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .timeline-item.done .timeline-num {
+      background: var(--success);
+      color: white;
+    }
+    .timeline-content {
+      flex: 1;
+      padding-top: 4px;
+    }
+    .timeline-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--dark);
+    }
+    .timeline-status {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 8px;
+    }
+    .timeline-status.done { background: #D1FAE5; color: #065F46; }
+    .timeline-status.wait { background: #F3F4F6; color: #6B7280; }
+
+    /* Risk */
+    .risk-card {
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin: 10px 0;
+    }
+    .risk-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+    }
+    .risk-title {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--dark);
+      margin-bottom: 4px;
+    }
+    .risk-response {
+      font-size: 13px;
+      color: var(--text-light);
+    }
+
+    /* Disclaimer */
+    .disclaimer {
+      background: linear-gradient(135deg, #FFFBEB, #FEF3C7);
+      border: 1px solid #FDE68A;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 16px 0;
+      text-align: center;
+    }
+    .disclaimer p {
+      font-size: 14px;
+      color: #92400E;
+      margin-bottom: 4px;
+    }
+
+    /* Project Structure */
+    .tree {
+      background: #1E1B4B;
+      border-radius: 10px;
+      padding: 24px;
+      margin: 16px 0;
+      font-family: 'SF Mono', Monaco, monospace;
+      font-size: 13px;
+      color: #E2E8F0;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+    .tree .folder { color: #93C5FD; }
+    .tree .file { color: #86EFAC; }
+    .tree .comment { color: #6B7280; }
+
+    /* Quiz Table */
+    .quiz-table {
+      width: 100%;
+      margin: 12px 0;
+      font-size: 13px;
+    }
+    .quiz-table th {
+      background: var(--primary-bg);
+      color: var(--primary);
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+    }
+    .quiz-table th:first-child { border-radius: 8px 0 0 0; }
+    .quiz-table th:last-child { border-radius: 0 8px 0 0; }
+    .quiz-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    .quiz-table tr:last-child td { border-bottom: none; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 40px 24px;
+      color: var(--text-light);
+      font-size: 13px;
+    }
+
+    /* Responsive */
+    @media (max-width: 640px) {
+      .hero { padding: 60px 20px 40px; }
+      .hero h1 { font-size: 32px; }
+      section { padding: 24px; }
+      .info-grid { grid-template-columns: 1fr; }
+      .tech-grid { grid-template-columns: 1fr; }
+      .flow-step { display: block; margin: 4px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="hero-badge">PRD v1.0 &mdash; 2026.03</div>
+  <h1>운명 <span>API</span></h1>
+  <p class="subtitle">
+    생년월일시 + 혈액형만 입력하면<br>
+    사주, 별자리, MBTI 예측, 혈액형 성격, 띠까지<br>
+    AI가 종합 해석해주는 운세 서비스
+  </p>
+  <div class="hero-tags">
+    <span class="hero-tag">사주팔자</span>
+    <span class="hero-tag">오행 분석</span>
+    <span class="hero-tag">별자리</span>
+    <span class="hero-tag">혈액형</span>
+    <span class="hero-tag">띠 운세</span>
+    <span class="hero-tag">MBTI 예측</span>
+    <span class="hero-tag">AI 종합 해석</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- TOC -->
+  <div class="toc">
+    <h3>목차</h3>
+    <div class="toc-grid">
+      <a href="#overview">1. 프로젝트 개요</a>
+      <a href="#modules">2. 분석 모듈</a>
+      <a href="#api">3. API 설계</a>
+      <a href="#tech">4. 기술 스택</a>
+      <a href="#structure">5. 프로젝트 구조</a>
+      <a href="#flow">6. 유저 플로우</a>
+      <a href="#mvp">7. MVP 범위</a>
+      <a href="#schedule">8. 일정</a>
+      <a href="#risk">9. 리스크 &amp; 고려사항</a>
+      <a href="#disclaimer">10. 면책 조항</a>
+    </div>
+  </div>
+
+  <!-- 1. Overview -->
+  <section id="overview">
+    <h2><span class="num">1</span> 프로젝트 개요</h2>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="label">서비스명</div>
+        <div class="value">운명 API (Unmyeong API)</div>
+        <div class="desc">샤머니즘 총집합 운세 서비스</div>
+      </div>
+      <div class="info-card">
+        <div class="label">한줄 소개</div>
+        <div class="value">원스톱 종합 운세 분석</div>
+        <div class="desc">생년월일시 + 혈액형 → AI 종합 해석 REST API</div>
+      </div>
+      <div class="info-card">
+        <div class="label">타겟 사용자</div>
+        <div class="value">20~30대 MZ세대</div>
+        <div class="desc">운세/성격 분석에 관심 있는 사용자 &amp; 개발자</div>
+      </div>
+    </div>
+
+    <h3>배경 및 목적</h3>
+    <p>MZ세대는 MBTI, 별자리, 사주, 혈액형 등 성격/운세 콘텐츠를 가볍게 소비하지만, 각각 따로 찾아봐야 하는 불편함이 있습니다.</p>
+    <p>개별 결과가 아닌, <strong>AI가 모든 결과를 종합</strong>해서 하나의 스토리로 풀어주는 <strong>원스톱 종합 분석 서비스</strong>를 API 형태로 제공합니다.</p>
+
+    <h3>유저 입력 (최소화)</h3>
+    <table>
+      <thead>
+        <tr><th>필드</th><th>필수</th><th>비고</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>생년월일</td><td>필수</td><td>양력 기준</td></tr>
+        <tr><td>태어난 시간</td><td>필수</td><td>모르면 시주 추정 퀴즈로 대체</td></tr>
+        <tr><td>혈액형</td><td>선택</td><td>모르면 해당 모듈 스킵</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <!-- 2. Modules -->
+  <section id="modules">
+    <h2><span class="num">2</span> 분석 모듈</h2>
+
+    <div class="module-card fire">
+      <div class="module-header">
+        <div class="module-icon">&#9784;</div>
+        <div>
+          <div class="module-title">모듈 1: 사주팔자</div>
+          <div class="module-subtitle">Four Pillars of Destiny</div>
+        </div>
+      </div>
+      <table class="module-table">
+        <tr><td>입력</td><td>생년월일시 (양력)</td></tr>
+        <tr><td>출력</td><td>년주 / 월주 / 일주 / 시주, 천간 &middot; 지지, 띠</td></tr>
+        <tr><td>로직</td><td>절기 기반 간지 계산</td></tr>
+      </table>
+    </div>
+
+    <div class="module-card wood">
+      <div class="module-header">
+        <div class="module-icon">&#9765;</div>
+        <div>
+          <div class="module-title">모듈 2: 오행 분석</div>
+          <div class="module-subtitle">Five Elements Analysis</div>
+        </div>
+      </div>
+      <table class="module-table">
+        <tr><td>입력</td><td>사주팔자 결과</td></tr>
+        <tr><td>출력</td><td>목/화/토/금/수 분포, 본인 오행, 강약 분석</td></tr>
+      </table>
+    </div>
+
+    <div class="module-card water">
+      <div class="module-header">
+        <div class="module-icon">&#9734;</div>
+        <div>
+          <div class="module-title">모듈 3: 별자리</div>
+          <div class="module-subtitle">Western Zodiac</div>
+        </div>
+      </div>
+      <table class="module-table">
+        <tr><td>입력</td><td>생월일</td></tr>
+        <tr><td>출력</td><td>별자리, 원소(불/물/흙/바람), 수호성, 성격 키워드</td></tr>
+        <tr><td>로직</td><td>양력 날짜 기반 12별자리 매핑</td></tr>
+      </table>
+    </div>
+
+    <div class="module-card fire">
+      <div class="module-header">
+        <div class="module-icon">&#128169;</div>
+        <div>
+          <div class="module-title">모듈 4: 혈액형 성격</div>
+          <div class="module-subtitle">Blood Type Personality</div>
+        </div>
+      </div>
+      <table class="module-table">
+        <tr><td>입력</td><td>혈액형 (A / B / O / AB)</td></tr>
+        <tr><td>출력</td><td>성격 특징, 장점, 단점, 연애 스타일</td></tr>
+        <tr><td>로직</td><td>혈액형별 성격 상수 데이터</td></tr>
+      </table>
+    </div>
+
+    <div class="module-card wind">
+      <div class="module-header">
+        <div class="module-icon">&#129504;</div>
+        <div>
+          <div class="module-title">모듈 5: MBTI 예측</div>
+          <div class="module-subtitle">MBTI Prediction (엔터테인먼트)</div>
+        </div>
+      </div>
+      <table class="module-table">
+        <tr><td>입력</td><td>사주 + 별자리 + 혈액형 종합 결과</td></tr>
+        <tr><td>출력</td><td>예상 MBTI 타입, 각 축별 경향 점수</td></tr>
+        <tr><td>로직</td><td>오행 &middot; 별자리 원소 &middot; 혈액형 성격의 상관 매핑</td></tr>
+        <tr><td>참고</td><td>과학적 근거 X, 엔터테인먼트 목적 명시</td></tr>
+      </table>
+    </div>
+
+    <div class="module-card earth">
+      <div class="module-header">
+        <div class="module-icon">&#128018;</div>
+        <div>
+          <div class="module-title">모듈 6: 띠 운세</div>
+          <div class="module-subtitle">Chinese Zodiac</div>
+        </div>
+      </div>
+      <table class="module-table">
+        <tr><td>입력</td><td>생년</td></tr>
+        <tr><td>출력</td><td>띠 동물, 성격, 올해 운세, 궁합 띠</td></tr>
+        <tr><td>로직</td><td>12간지 동물 매핑 + 상수 데이터</td></tr>
+      </table>
+    </div>
+
+    <div class="module-card accent">
+      <div class="module-header">
+        <div class="module-icon">&#10068;</div>
+        <div>
+          <div class="module-title">모듈 7: 시주 추정 퀴즈</div>
+          <div class="module-subtitle">Birth Hour Estimator</div>
+        </div>
+      </div>
+      <table class="module-table">
+        <tr><td>입력</td><td>간단한 질문 4개에 대한 답변</td></tr>
+        <tr><td>출력</td><td>추정 태어난 시간대 (상위 2~3개 후보)</td></tr>
+        <tr><td>로직</td><td>전통 명리학 기반 성향-시주 매핑 + AI 보정</td></tr>
+      </table>
+
+      <h3 style="margin-top: 20px; font-size: 15px;">퀴즈 질문</h3>
+      <table class="quiz-table">
+        <thead>
+          <tr><th>#</th><th>질문</th><th>선택지</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>형제/자매 중 몇째인가요?</td><td>외동 / 첫째 / 중간 / 막내</td></tr>
+          <tr><td>2</td><td>아침형인가요, 저녁형인가요?</td><td>아침형 / 저녁형 / 둘 다 아님</td></tr>
+          <tr><td>3</td><td>첫인상이 어떻다는 말을 자주 듣나요?</td><td>차가움 / 따뜻함 / 활발함 / 조용함</td></tr>
+          <tr><td>4</td><td>의사결정 스타일은?</td><td>즉흥적 / 신중함 / 상황에 따라 다름</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="module-card">
+      <div class="module-header">
+        <div class="module-icon">&#129302;</div>
+        <div>
+          <div class="module-title">모듈 8: AI 종합 해석</div>
+          <div class="module-subtitle">Claude AI Synthesis</div>
+        </div>
+      </div>
+      <table class="module-table">
+        <tr><td>입력</td><td>모든 모듈의 분석 결과</td></tr>
+        <tr><td>출력</td><td>종합 성격, 올해 운세, 연애운, 직업운, 조언</td></tr>
+        <tr><td>AI</td><td>Claude API (Anthropic)</td></tr>
+        <tr><td>톤</td><td>친근하고 재밌는 말투, 긍정적 방향 제시</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- 3. API -->
+  <section id="api">
+    <h2><span class="num">3</span> API 설계</h2>
+
+    <h3>엔드포인트</h3>
+
+    <div class="api-endpoint">
+      <div class="api-header">
+        <span class="api-method get">GET</span>
+        <span class="api-path">/health</span>
+        <span class="api-desc">서버 상태 확인</span>
+        <span class="api-badge free">인증 불필요</span>
+      </div>
+    </div>
+
+    <div class="api-endpoint">
+      <div class="api-header">
+        <span class="api-method post">POST</span>
+        <span class="api-path">/api/analyze</span>
+        <span class="api-desc">전체 모듈 분석 (AI 해석 제외)</span>
+        <span class="api-badge free">인증 불필요</span>
+      </div>
+    </div>
+
+    <div class="api-endpoint">
+      <div class="api-header">
+        <span class="api-method post">POST</span>
+        <span class="api-path">/api/analyze/full</span>
+        <span class="api-desc">전체 분석 + AI 종합 해석</span>
+        <span class="api-badge key">API Key</span>
+      </div>
+    </div>
+
+    <div class="api-endpoint">
+      <div class="api-header">
+        <span class="api-method post">POST</span>
+        <span class="api-path">/api/saju</span>
+        <span class="api-desc">사주팔자만 분석</span>
+        <span class="api-badge free">인증 불필요</span>
+      </div>
+    </div>
+
+    <div class="api-endpoint">
+      <div class="api-header">
+        <span class="api-method post">POST</span>
+        <span class="api-path">/api/zodiac</span>
+        <span class="api-desc">별자리만 분석</span>
+        <span class="api-badge free">인증 불필요</span>
+      </div>
+    </div>
+
+    <div class="api-endpoint">
+      <div class="api-header">
+        <span class="api-method post">POST</span>
+        <span class="api-path">/api/blood-type</span>
+        <span class="api-desc">혈액형 성격만 분석</span>
+        <span class="api-badge free">인증 불필요</span>
+      </div>
+    </div>
+
+    <div class="api-endpoint">
+      <div class="api-header">
+        <span class="api-method post">POST</span>
+        <span class="api-path">/api/estimate-hour</span>
+        <span class="api-desc">시주 추정 퀴즈</span>
+        <span class="api-badge free">인증 불필요</span>
+      </div>
+    </div>
+
+    <div class="api-endpoint">
+      <div class="api-header">
+        <span class="api-method post">POST</span>
+        <span class="api-path">/api/compatibility</span>
+        <span class="api-desc">두 사람 궁합 분석</span>
+        <span class="api-badge key">API Key</span>
+      </div>
+    </div>
+
+    <h3>요청 / 응답 예시</h3>
+
+    <p><strong>POST /api/analyze</strong></p>
+    <div class="code-block">
+<pre><span class="comment">// Request</span>
+{
+  <span class="key">"year"</span>: <span class="num">1995</span>,
+  <span class="key">"month"</span>: <span class="num">8</span>,
+  <span class="key">"day"</span>: <span class="num">15</span>,
+  <span class="key">"hour"</span>: <span class="num">14</span>,
+  <span class="key">"blood_type"</span>: <span class="str">"A"</span>
+}</pre>
+    </div>
+
+    <div class="code-block">
+<pre><span class="comment">// Response</span>
+{
+  <span class="key">"saju"</span>: {
+    <span class="key">"year_pillar"</span>: { <span class="key">"cheongan"</span>: <span class="str">"을"</span>, <span class="key">"jiji"</span>: <span class="str">"해"</span> },
+    <span class="key">"month_pillar"</span>: { <span class="key">"cheongan"</span>: <span class="str">"갑"</span>, <span class="key">"jiji"</span>: <span class="str">"신"</span> },
+    <span class="key">"day_pillar"</span>: { <span class="key">"cheongan"</span>: <span class="str">"경"</span>, <span class="key">"jiji"</span>: <span class="str">"오"</span> },
+    <span class="key">"hour_pillar"</span>: { <span class="key">"cheongan"</span>: <span class="str">"계"</span>, <span class="key">"jiji"</span>: <span class="str">"미"</span> },
+    <span class="key">"animal"</span>: <span class="str">"돼지"</span>
+  },
+  <span class="key">"ohaeng"</span>: {
+    <span class="key">"counts"</span>: { <span class="key">"목"</span>: <span class="num">2</span>, <span class="key">"화"</span>: <span class="num">1</span>, <span class="key">"토"</span>: <span class="num">1</span>, <span class="key">"금"</span>: <span class="num">2</span>, <span class="key">"수"</span>: <span class="num">2</span> },
+    <span class="key">"my_ohaeng"</span>: <span class="str">"금"</span>,
+    <span class="key">"strongest"</span>: <span class="str">"목"</span>,
+    <span class="key">"weakest"</span>: <span class="str">"화"</span>
+  },
+  <span class="key">"zodiac"</span>: {
+    <span class="key">"sign"</span>: <span class="str">"사자자리"</span>,
+    <span class="key">"element"</span>: <span class="str">"불"</span>,
+    <span class="key">"ruling_planet"</span>: <span class="str">"태양"</span>
+  },
+  <span class="key">"blood_type"</span>: {
+    <span class="key">"type"</span>: <span class="str">"A"</span>,
+    <span class="key">"traits"</span>: [<span class="str">"꼼꼼함"</span>, <span class="str">"책임감"</span>, <span class="str">"배려심"</span>]
+  },
+  <span class="key">"predicted_mbti"</span>: {
+    <span class="key">"type"</span>: <span class="str">"ISFJ"</span>,
+    <span class="key">"scores"</span>: { <span class="key">"E_I"</span>: {<span class="key">"I"</span>: <span class="num">65</span>}, <span class="key">"S_N"</span>: {<span class="key">"S"</span>: <span class="num">60</span>} }
+  }
+}</pre>
+    </div>
+
+    <p><strong>POST /api/compatibility</strong> &mdash; 두 사람 궁합</p>
+    <div class="code-block">
+<pre><span class="comment">// Response</span>
+{
+  <span class="key">"score"</span>: <span class="num">85</span>,
+  <span class="key">"summary"</span>: <span class="str">"사자자리 x 양자리, 불의 궁합!"</span>,
+  <span class="key">"details"</span>: {
+    <span class="key">"zodiac_compatibility"</span>: { <span class="key">"score"</span>: <span class="num">90</span> },
+    <span class="key">"saju_compatibility"</span>: { <span class="key">"score"</span>: <span class="num">80</span> },
+    <span class="key">"blood_type_compatibility"</span>: { <span class="key">"score"</span>: <span class="num">85</span> }
+  }
+}</pre>
+    </div>
+  </section>
+
+  <!-- 4. Tech -->
+  <section id="tech">
+    <h2><span class="num">4</span> 기술 스택</h2>
+
+    <div class="tech-grid">
+      <div class="tech-item">
+        <div class="tech-logo" style="background: #3776AB20; color: #3776AB;">&#128013;</div>
+        <div>
+          <div class="tech-name">Python 3.11+</div>
+          <div class="tech-reason">역학 관련 라이브러리 풍부</div>
+        </div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-logo" style="background: #00968820; color: #009688;">&#9889;</div>
+        <div>
+          <div class="tech-name">FastAPI</div>
+          <div class="tech-reason">Swagger 자동 문서화, 비동기, 타입 검증</div>
+        </div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-logo" style="background: #D4AA7D20; color: #D4AA7D;">&#129302;</div>
+        <div>
+          <div class="tech-name">Claude API</div>
+          <div class="tech-reason">한국어 우수, 긴 컨텍스트로 종합 해석에 적합</div>
+        </div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-logo" style="background: #FF634720; color: #FF6347;">&#128197;</div>
+        <div>
+          <div class="tech-name">korean-lunar-calendar</div>
+          <div class="tech-reason">한국 음력/양력 변환</div>
+        </div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-logo" style="background: #E74C8B20; color: #E74C8B;">&#128272;</div>
+        <div>
+          <div class="tech-name">Pydantic v2</div>
+          <div class="tech-reason">FastAPI 기본 통합, 데이터 검증</div>
+        </div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-logo" style="background: #4B0B8220; color: #4B0B82;">&#128640;</div>
+        <div>
+          <div class="tech-name">Uvicorn</div>
+          <div class="tech-reason">ASGI 고성능 서버</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Structure -->
+  <section id="structure">
+    <h2><span class="num">5</span> 프로젝트 구조</h2>
+
+    <div class="tree">
+<span class="folder">saju-service/</span>
+├── <span class="folder">app/</span>
+│   ├── <span class="file">main.py</span>              <span class="comment"># FastAPI 앱 진입점</span>
+│   ├── <span class="folder">api/</span>
+│   │   └── <span class="file">routes.py</span>        <span class="comment"># API 엔드포인트</span>
+│   ├── <span class="folder">core/</span>
+│   │   ├── <span class="file">saju.py</span>          <span class="comment"># 사주팔자 계산</span>
+│   │   ├── <span class="file">ohaeng.py</span>        <span class="comment"># 오행 분석</span>
+│   │   ├── <span class="file">zodiac.py</span>        <span class="comment"># 별자리 분석</span>
+│   │   ├── <span class="file">blood_type.py</span>    <span class="comment"># 혈액형 성격</span>
+│   │   ├── <span class="file">chinese_zodiac.py</span> <span class="comment"># 띠 운세</span>
+│   │   ├── <span class="file">mbti_predictor.py</span> <span class="comment"># MBTI 예측</span>
+│   │   ├── <span class="file">hour_estimator.py</span> <span class="comment"># 시주 추정 퀴즈</span>
+│   │   ├── <span class="file">compatibility.py</span>  <span class="comment"># 궁합 분석</span>
+│   │   └── <span class="file">interpreter.py</span>   <span class="comment"># Claude AI 종합 해석</span>
+│   ├── <span class="folder">models/</span>
+│   │   └── <span class="file">schemas.py</span>       <span class="comment"># Pydantic 모델</span>
+│   └── <span class="folder">data/</span>
+│       ├── <span class="file">constants.py</span>     <span class="comment"># 사주 상수 (천간/지지/오행)</span>
+│       ├── <span class="file">zodiac_data.py</span>   <span class="comment"># 별자리 상수</span>
+│       ├── <span class="file">blood_type_data.py</span> <span class="comment"># 혈액형 상수</span>
+│       └── <span class="file">chinese_zodiac_data.py</span> <span class="comment"># 띠 상수</span>
+├── <span class="folder">docs/</span>
+│   └── <span class="file">PRD.md</span>               <span class="comment"># 기획서</span>
+├── <span class="file">requirements.txt</span>
+├── <span class="file">.env.example</span>
+└── <span class="file">.gitignore</span>
+    </div>
+  </section>
+
+  <!-- 6. Flow -->
+  <section id="flow">
+    <h2><span class="num">6</span> 유저 플로우</h2>
+
+    <div class="flow">
+      <div>
+        <span class="flow-step">&#128197; 생년월일 입력</span>
+      </div>
+      <div>
+        <span class="flow-arrow">&#8595;</span>
+      </div>
+      <div style="display: flex; justify-content: center; gap: 24px; flex-wrap: wrap; align-items: flex-start;">
+        <div>
+          <span class="flow-step" style="background: #D1FAE5;">&#9200; 시간 알고 있음 &rarr; 직접 입력</span>
+        </div>
+        <div>
+          <span class="flow-step" style="background: #FEF3C7;">&#10068; 시간 모름 &rarr; 퀴즈 4개 답변</span>
+          <br>
+          <span class="flow-arrow">&#8595;</span>
+          <br>
+          <span class="flow-step" style="font-size: 13px;">시주 추정 (상위 2~3개) &rarr; 사용자 선택</span>
+        </div>
+      </div>
+      <div>
+        <span class="flow-arrow">&#8595;</span>
+      </div>
+      <div>
+        <span class="flow-step">&#128169; 혈액형 입력 (선택, 스킵 가능)</span>
+      </div>
+      <div>
+        <span class="flow-arrow">&#8595;</span>
+      </div>
+      <div class="flow-branch">
+        <span class="flow-step" style="border-left: 3px solid var(--fire);">&#9784; 사주</span>
+        <span class="flow-step" style="border-left: 3px solid var(--water);">&#9734; 별자리</span>
+        <span class="flow-step" style="border-left: 3px solid var(--fire);">&#128169; 혈액형</span>
+        <span class="flow-step" style="border-left: 3px solid var(--earth);">&#128018; 띠운세</span>
+        <span class="flow-step" style="border-left: 3px solid var(--wind);">&#129504; MBTI예측</span>
+      </div>
+      <div>
+        <span class="flow-arrow">&#8595;</span>
+      </div>
+      <div>
+        <span class="flow-step" style="background: #EDE9FE; font-weight: 600;">&#128203; /api/analyze 응답 (개별 결과 모음)</span>
+      </div>
+      <div>
+        <span class="flow-arrow">&#8595;</span> <span style="font-size: 12px; color: var(--primary);">(선택)</span>
+      </div>
+      <div>
+        <span class="flow-step" style="background: linear-gradient(135deg, #EDE9FE, #DBEAFE); font-weight: 600;">&#129302; Claude AI 종합 해석</span>
+      </div>
+      <div>
+        <span class="flow-arrow">&#8595;</span>
+      </div>
+      <div>
+        <span class="flow-step" style="background: var(--dark); color: white; font-weight: 600;">&#9989; /api/analyze/full 응답</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. MVP -->
+  <section id="mvp">
+    <h2><span class="num">7</span> MVP 범위</h2>
+
+    <h3>In Scope (v1.0)</h3>
+    <ul class="checklist">
+      <li><span class="check">&#9744;</span> 사주팔자 계산 (절기 기반)</li>
+      <li><span class="check">&#9744;</span> 오행 분포 분석</li>
+      <li><span class="check">&#9744;</span> 별자리 분석</li>
+      <li><span class="check">&#9744;</span> 혈액형 성격 분석</li>
+      <li><span class="check">&#9744;</span> 띠 운세</li>
+      <li><span class="check">&#9744;</span> MBTI 예측 (재미 요소)</li>
+      <li><span class="check">&#9744;</span> 시주 추정 퀴즈</li>
+      <li><span class="check">&#9744;</span> Claude API 종합 해석</li>
+      <li><span class="check">&#9744;</span> 두 사람 궁합 분석</li>
+      <li><span class="check">&#9744;</span> Swagger API 문서</li>
+    </ul>
+
+    <h3>Out of Scope (v2.0 고려)</h3>
+    <ul class="checklist">
+      <li><span class="check" style="opacity: 0.4;">&#9744;</span><span style="opacity: 0.6;"> 음력 입력 지원</span></li>
+      <li><span class="check" style="opacity: 0.4;">&#9744;</span><span style="opacity: 0.6;"> 일별/월별 운세 (데일리 운세)</span></li>
+      <li><span class="check" style="opacity: 0.4;">&#9744;</span><span style="opacity: 0.6;"> 타로 카드 연동</span></li>
+      <li><span class="check" style="opacity: 0.4;">&#9744;</span><span style="opacity: 0.6;"> 관상/손금 (이미지 분석)</span></li>
+      <li><span class="check" style="opacity: 0.4;">&#9744;</span><span style="opacity: 0.6;"> 풍수 분석</span></li>
+      <li><span class="check" style="opacity: 0.4;">&#9744;</span><span style="opacity: 0.6;"> 사용자 계정 &amp; 결과 저장</span></li>
+      <li><span class="check" style="opacity: 0.4;">&#9744;</span><span style="opacity: 0.6;"> 프론트엔드 웹 UI</span></li>
+      <li><span class="check" style="opacity: 0.4;">&#9744;</span><span style="opacity: 0.6;"> 결과 공유 카드 이미지 생성</span></li>
+    </ul>
+  </section>
+
+  <!-- 8. Schedule -->
+  <section id="schedule">
+    <h2><span class="num">8</span> 일정</h2>
+
+    <div class="timeline">
+      <div class="timeline-item done">
+        <div class="timeline-num">1</div>
+        <div class="timeline-content">
+          <span class="timeline-title">기획서 작성</span>
+          <span class="timeline-status done">완료</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">2</div>
+        <div class="timeline-content">
+          <span class="timeline-title">프로젝트 셋업 &amp; 상수 데이터</span>
+          <span class="timeline-status wait">대기</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">3</div>
+        <div class="timeline-content">
+          <span class="timeline-title">사주팔자 + 오행 엔진</span>
+          <span class="timeline-status wait">대기</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">4</div>
+        <div class="timeline-content">
+          <span class="timeline-title">별자리 모듈</span>
+          <span class="timeline-status wait">대기</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">5</div>
+        <div class="timeline-content">
+          <span class="timeline-title">혈액형 모듈</span>
+          <span class="timeline-status wait">대기</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">6</div>
+        <div class="timeline-content">
+          <span class="timeline-title">띠 운세 모듈</span>
+          <span class="timeline-status wait">대기</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">7</div>
+        <div class="timeline-content">
+          <span class="timeline-title">MBTI 예측 모듈</span>
+          <span class="timeline-status wait">대기</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">8</div>
+        <div class="timeline-content">
+          <span class="timeline-title">시주 추정 퀴즈 모듈</span>
+          <span class="timeline-status wait">대기</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">9</div>
+        <div class="timeline-content">
+          <span class="timeline-title">궁합 분석 모듈</span>
+          <span class="timeline-status wait">대기</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">10</div>
+        <div class="timeline-content">
+          <span class="timeline-title">Claude API 종합 해석</span>
+          <span class="timeline-status wait">대기</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">11</div>
+        <div class="timeline-content">
+          <span class="timeline-title">API 라우트 &amp; 스키마 통합</span>
+          <span class="timeline-status wait">대기</span>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-num">12</div>
+        <div class="timeline-content">
+          <span class="timeline-title">테스트 &amp; 검증</span>
+          <span class="timeline-status wait">대기</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. Risk -->
+  <section id="risk">
+    <h2><span class="num">9</span> 리스크 &amp; 고려사항</h2>
+
+    <div class="risk-card">
+      <div class="risk-icon">&#9888;&#65039;</div>
+      <div>
+        <div class="risk-title">사주 계산 정확도</div>
+        <div class="risk-response">절기 기준 적용, 만세력 교차 검증</div>
+      </div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-icon">&#128176;</div>
+      <div>
+        <div class="risk-title">Claude API 비용</div>
+        <div class="risk-response">AI 해석 엔드포인트 분리, 개별 분석은 무료</div>
+      </div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-icon">&#128268;</div>
+      <div>
+        <div class="risk-title">Claude API 장애</div>
+        <div class="risk-response">계산 기능은 AI 없이 독립 동작</div>
+      </div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-icon">&#129504;</div>
+      <div>
+        <div class="risk-title">MBTI 예측 신뢰도</div>
+        <div class="risk-response">"재미로 보는" 엔터테인먼트 목적 명확히 안내</div>
+      </div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-icon">&#9200;</div>
+      <div>
+        <div class="risk-title">시주 추정 정확도</div>
+        <div class="risk-response">후보 2~3개 제시 + 신뢰도 표기로 기대치 관리</div>
+      </div>
+    </div>
+    <div class="risk-card">
+      <div class="risk-icon">&#128169;</div>
+      <div>
+        <div class="risk-title">혈액형 성격론 논란</div>
+        <div class="risk-response">과학적 근거 없음 명시, 재미 요소로만 제공</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. Disclaimer -->
+  <section id="disclaimer">
+    <h2><span class="num">10</span> 면책 조항</h2>
+
+    <div class="disclaimer">
+      <p><strong>본 서비스의 모든 분석 결과는 전통 문화와 엔터테인먼트 목적으로 제공됩니다.</strong></p>
+      <p>과학적 근거를 기반으로 하지 않으며, 중요한 의사결정의 근거로 사용하지 마세요.</p>
+      <p><strong>재미로 즐겨주세요! &#127881;</strong></p>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>운명 API (Unmyeong API) &mdash; PRD v1.0 &mdash; 2026.03</p>
+</footer>
+
+</body>
+</html>
