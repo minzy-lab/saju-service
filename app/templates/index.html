@@ -150,15 +150,27 @@
         <p class="mt-3 text-xs text-mystic-500">* 엔터테인먼트 목적이며 과학적 근거는 없습니다</p>
     </div>
 
-    <!-- AI 해석 -->
-    <div id="ai-section" class="bg-gradient-to-br from-mystic-900/80 to-pink-900/30 border border-mystic-600/50 rounded-2xl p-6">
-        <h3 class="text-lg font-semibold mb-4 bg-gradient-to-r from-mystic-300 to-pink-300 bg-clip-text text-transparent">AI 종합 해석</h3>
-        <div id="ai-result">
-            <div class="flex items-center gap-3 text-mystic-400">
-                <div class="animate-spin rounded-full h-5 w-5 border-2 border-mystic-400 border-t-transparent"></div>
-                <span>Claude AI가 종합 해석을 준비하고 있어요...</span>
-            </div>
+    <!-- 무료 해석 -->
+    <div class="bg-gradient-to-br from-mystic-900/80 to-indigo-900/30 border border-mystic-600/50 rounded-2xl p-6">
+        <h3 class="text-lg font-semibold mb-4 text-mystic-200">종합 해석</h3>
+        <div id="local-interpretation"></div>
+    </div>
+
+    <!-- AI 상세 해석 (유료) -->
+    <div id="ai-section" class="bg-gradient-to-br from-mystic-900/80 to-pink-900/30 border border-pink-600/30 rounded-2xl p-6">
+        <div id="ai-prompt" class="text-center">
+            <h3 class="text-lg font-semibold mb-2 bg-gradient-to-r from-pink-300 to-amber-300 bg-clip-text text-transparent">AI 상세 해석</h3>
+            <p class="text-mystic-400 text-sm mb-4">Claude AI가 당신만을 위한 깊이 있는 맞춤 해석을 제공합니다</p>
+            <button id="ai-btn" onclick="requestAIInterpretation()"
+                class="bg-gradient-to-r from-pink-600 to-amber-600 hover:from-pink-500 hover:to-amber-500 text-white font-semibold px-6 py-3 rounded-xl transition transform hover:scale-[1.02] active:scale-[0.98]">
+                AI 상세 해석 보기
+            </button>
         </div>
+        <div id="ai-loading" class="hidden text-center py-4">
+            <div class="inline-block animate-spin rounded-full h-6 w-6 border-2 border-pink-400 border-t-transparent"></div>
+            <p class="mt-2 text-mystic-400 text-sm">Claude AI가 맞춤 해석을 작성하고 있어요...</p>
+        </div>
+        <div id="ai-result" class="hidden"></div>
     </div>
 
     <!-- 다시하기 -->

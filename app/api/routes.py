@@ -9,7 +9,7 @@ from app.core.chinese_zodiac import analyze_chinese_zodiac
 from app.core.mbti_predictor import predict_mbti
 from app.core.hour_estimator import estimate_birth_hour
 from app.core.compatibility import analyze_compatibility
-from app.core.interpreter import interpret_full, interpret_compatibility
+from app.core.interpreter import interpret_full, interpret_full_ai, interpret_compatibility
 
 router = APIRouter(prefix="/api")
 
@@ -47,15 +47,17 @@ def _build_analysis(req: AnalyzeRequest) -> dict:
 
 @router.post("/analyze")
 async def analyze(req: AnalyzeRequest):
-    """전체 모듈 분석 (AI 해석 제외)."""
-    return _build_analysis(req)
+    """전체 모듈 분석 + 무료 로컬 해석."""
+    analysis = _build_analysis(req)
+    analysis["interpretation"] = await interpret_full(analysis)
+    return analysis
 
 
 @router.post("/analyze/full")
 async def analyze_full(req: AnalyzeRequest):
-    """전체 분석 + AI 종합 해석."""
+    """전체 분석 + AI 상세 해석 (유료)."""
     analysis = _build_analysis(req)
-    interpretation = await interpret_full(analysis)
+    interpretation = await interpret_full_ai(analysis)
     analysis["interpretation"] = interpretation
     return analysis
 

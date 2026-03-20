@@ -1,3 +1,6 @@
+// 분석 요청 body를 저장 (AI 해석 버튼에서 사용)
+let savedRequestBody = null;
+
 // 시간 모름 체크박스 토글
 document.getElementById('dont-know-hour').addEventListener('change', (e) => {
     const quiz = document.getElementById('quiz-section');
@@ -31,7 +34,6 @@ document.getElementById('analyze-form').addEventListener('submit', async (e) => 
 
     let hour;
 
-    // 시간 모르면 퀴즈로 추정
     if (dontKnowHour) {
         document.getElementById('form-section').classList.add('hidden');
         document.getElementById('loading').classList.remove('hidden');
@@ -60,15 +62,14 @@ document.getElementById('analyze-form').addEventListener('submit', async (e) => 
         }
     }
 
-    // 분석 시작
     document.getElementById('form-section').classList.add('hidden');
     document.getElementById('loading').classList.remove('hidden');
     document.getElementById('loading-text').textContent = '운명을 분석하고 있습니다...';
 
     const body = { year, month, day, hour };
     if (bloodType) body.blood_type = bloodType;
+    savedRequestBody = body;
 
-    // 일반 분석 먼저 (빠름)
     const analyzeRes = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -76,7 +77,6 @@ document.getElementById('analyze-form').addEventListener('submit', async (e) => 
     });
     const data = await analyzeRes.json();
 
-    // 결과 렌더링
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('results').classList.remove('hidden');
 
@@ -90,9 +90,59 @@ document.getElementById('analyze-form').addEventListener('submit', async (e) => 
         renderBloodType(data.blood_type);
     }
 
-    // AI 해석 비동기 (느림)
-    fetchAIInterpretation(body);
+    // 무료 로컬 해석 바로 표시
+    if (data.interpretation) {
+        renderInterpretation(data.interpretation, 'local-interpretation');
+    }
 });
+
+function renderInterpretation(interp, targetId) {
+    document.getElementById(targetId).innerHTML = `
+        <p class="text-lg font-medium text-mystic-100 mb-4">${interp.summary || ''}</p>
+        <div class="space-y-4 text-sm text-mystic-200 leading-relaxed">
+            ${interp.personality ? `<div><span class="text-mystic-400 font-medium">성격 |</span> ${interp.personality}</div>` : ''}
+            ${interp.fortune_2026 ? `<div><span class="text-mystic-400 font-medium">2026년 운세 |</span> ${interp.fortune_2026}</div>` : ''}
+            ${interp.love ? `<div><span class="text-mystic-400 font-medium">연애운 |</span> ${interp.love}</div>` : ''}
+            ${interp.career ? `<div><span class="text-mystic-400 font-medium">직업운 |</span> ${interp.career}</div>` : ''}
+            ${interp.advice ? `<div class="mt-2 p-3 bg-mystic-800/50 rounded-xl text-mystic-100 font-medium">${interp.advice}</div>` : ''}
+        </div>
+    `;
+}
+
+// AI 상세 해석 버튼 클릭
+async function requestAIInterpretation() {
+    if (!savedRequestBody) return;
+
+    document.getElementById('ai-prompt').classList.add('hidden');
+    document.getElementById('ai-loading').classList.remove('hidden');
+
+    try {
+        const res = await fetch('/api/analyze/full', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(savedRequestBody)
+        });
+        const data = await res.json();
+
+        document.getElementById('ai-loading').classList.add('hidden');
+        document.getElementById('ai-result').classList.remove('hidden');
+
+        if (data.interpretation && !data.interpretation.error) {
+            renderInterpretation(data.interpretation, 'ai-result');
+        } else {
+            const errMsg = data.interpretation?.error || 'AI 해석을 불러오지 못했어요.';
+            document.getElementById('ai-result').innerHTML = `
+                <p class="text-mystic-400 text-sm">${errMsg}</p>
+            `;
+        }
+    } catch {
+        document.getElementById('ai-loading').classList.add('hidden');
+        document.getElementById('ai-result').classList.remove('hidden');
+        document.getElementById('ai-result').innerHTML = `
+            <p class="text-mystic-400 text-sm">AI 해석 서버에 연결할 수 없습니다.</p>
+        `;
+    }
+}
 
 function renderSaju(saju) {
     const pillars = [
@@ -241,37 +291,4 @@ function renderMBTI(mbti) {
             }).join('')}
         </div>
     `;
-}
-
-async function fetchAIInterpretation(body) {
-    try {
-        const res = await fetch('/api/analyze/full', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(body)
-        });
-        const data = await res.json();
-
-        if (data.interpretation && !data.interpretation.error) {
-            const interp = data.interpretation;
-            document.getElementById('ai-result').innerHTML = `
-                <p class="text-lg font-medium text-mystic-100 mb-4">${interp.summary || ''}</p>
-                <div class="space-y-4 text-sm text-mystic-200 leading-relaxed">
-                    ${interp.personality ? `<div><span class="text-mystic-400 font-medium">성격 |</span> ${interp.personality}</div>` : ''}
-                    ${interp.fortune_2026 ? `<div><span class="text-mystic-400 font-medium">2026년 운세 |</span> ${interp.fortune_2026}</div>` : ''}
-                    ${interp.love ? `<div><span class="text-mystic-400 font-medium">연애운 |</span> ${interp.love}</div>` : ''}
-                    ${interp.career ? `<div><span class="text-mystic-400 font-medium">직업운 |</span> ${interp.career}</div>` : ''}
-                    ${interp.advice ? `<div class="mt-2 p-3 bg-mystic-800/50 rounded-xl text-mystic-100 font-medium">${interp.advice}</div>` : ''}
-                </div>
-            `;
-        } else {
-            document.getElementById('ai-result').innerHTML = `
-                <p class="text-mystic-400 text-sm">AI 해석을 불러오지 못했어요. (.env에 ANTHROPIC_API_KEY를 설정해주세요)</p>
-            `;
-        }
-    } catch {
-        document.getElementById('ai-result').innerHTML = `
-            <p class="text-mystic-400 text-sm">AI 해석 서버에 연결할 수 없습니다.</p>
-        `;
-    }
 }
