@@ -1,0 +1,114 @@
+{% extends "base.html" %}
+{% block title %}운명 API - 궁합 분석{% endblock %}
+
+{% block content %}
+<section class="text-center py-8">
+    <h1 class="text-3xl md:text-4xl font-bold mb-3 bg-gradient-to-r from-pink-300 to-red-300 bg-clip-text text-transparent">
+        궁합 분석
+    </h1>
+    <p class="text-mystic-300">두 사람의 운명적 궁합을 알아보세요</p>
+</section>
+
+<!-- 입력 폼 -->
+<section id="form-section" class="max-w-2xl mx-auto">
+    <form id="compat-form" class="grid md:grid-cols-2 gap-4">
+        <!-- 1번 사람 -->
+        <div class="bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-5">
+            <h3 class="text-sm font-semibold text-pink-300 mb-4">첫 번째 사람</h3>
+            <div class="space-y-3">
+                <input type="number" id="p1-year" placeholder="연도" min="1900" max="2100"
+                    class="w-full bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-2 text-white text-sm placeholder-mystic-500 focus:outline-none focus:border-mystic-400">
+                <div class="grid grid-cols-3 gap-2">
+                    <input type="number" id="p1-month" placeholder="월" min="1" max="12"
+                        class="bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-2 text-white text-sm placeholder-mystic-500 focus:outline-none focus:border-mystic-400">
+                    <input type="number" id="p1-day" placeholder="일" min="1" max="31"
+                        class="bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-2 text-white text-sm placeholder-mystic-500 focus:outline-none focus:border-mystic-400">
+                    <input type="number" id="p1-hour" placeholder="시" min="0" max="23"
+                        class="bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-2 text-white text-sm placeholder-mystic-500 focus:outline-none focus:border-mystic-400">
+                </div>
+                <select id="p1-blood"
+                    class="w-full bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-mystic-400">
+                    <option value="">혈액형 (선택)</option>
+                    <option value="A">A형</option>
+                    <option value="B">B형</option>
+                    <option value="O">O형</option>
+                    <option value="AB">AB형</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- 2번 사람 -->
+        <div class="bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-5">
+            <h3 class="text-sm font-semibold text-blue-300 mb-4">두 번째 사람</h3>
+            <div class="space-y-3">
+                <input type="number" id="p2-year" placeholder="연도" min="1900" max="2100"
+                    class="w-full bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-2 text-white text-sm placeholder-mystic-500 focus:outline-none focus:border-mystic-400">
+                <div class="grid grid-cols-3 gap-2">
+                    <input type="number" id="p2-month" placeholder="월" min="1" max="12"
+                        class="bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-2 text-white text-sm placeholder-mystic-500 focus:outline-none focus:border-mystic-400">
+                    <input type="number" id="p2-day" placeholder="일" min="1" max="31"
+                        class="bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-2 text-white text-sm placeholder-mystic-500 focus:outline-none focus:border-mystic-400">
+                    <input type="number" id="p2-hour" placeholder="시" min="0" max="23"
+                        class="bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-2 text-white text-sm placeholder-mystic-500 focus:outline-none focus:border-mystic-400">
+                </div>
+                <select id="p2-blood"
+                    class="w-full bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-mystic-400">
+                    <option value="">혈액형 (선택)</option>
+                    <option value="A">A형</option>
+                    <option value="B">B형</option>
+                    <option value="O">O형</option>
+                    <option value="AB">AB형</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="md:col-span-2">
+            <button type="submit"
+                class="w-full bg-gradient-to-r from-pink-600 to-red-600 hover:from-pink-500 hover:to-red-500 text-white font-semibold py-3 rounded-xl transition transform hover:scale-[1.02] active:scale-[0.98]">
+                궁합 보기
+            </button>
+        </div>
+    </form>
+</section>
+
+<!-- 로딩 -->
+<section id="loading" class="hidden text-center py-20">
+    <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-pink-500 border-t-transparent"></div>
+    <p class="mt-4 text-mystic-300">두 사람의 궁합을 분석하고 있어요...</p>
+</section>
+
+<!-- 결과 -->
+<section id="results" class="hidden max-w-2xl mx-auto space-y-6 mt-8">
+    <!-- 종합 점수 -->
+    <div class="text-center bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-8">
+        <p class="text-mystic-400 text-sm mb-2">종합 궁합 점수</p>
+        <div id="total-score" class="text-7xl font-bold bg-gradient-to-r from-pink-400 to-red-400 bg-clip-text text-transparent"></div>
+        <div id="score-bar" class="mt-4 h-3 bg-mystic-800 rounded-full overflow-hidden max-w-xs mx-auto">
+            <div class="h-full bg-gradient-to-r from-pink-500 to-red-500 rounded-full transition-all duration-1000" style="width:0%"></div>
+        </div>
+    </div>
+
+    <!-- 상세 점수 -->
+    <div class="bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-6">
+        <h3 class="text-lg font-semibold mb-4 text-mystic-200">상세 궁합</h3>
+        <div id="detail-scores" class="space-y-3"></div>
+    </div>
+
+    <!-- AI 해석 -->
+    <div class="bg-gradient-to-br from-mystic-900/80 to-pink-900/30 border border-mystic-600/50 rounded-2xl p-6">
+        <h3 class="text-lg font-semibold mb-3 text-pink-300">AI 궁합 해석</h3>
+        <p id="ai-summary" class="text-mystic-200 text-sm leading-relaxed"></p>
+    </div>
+
+    <div class="text-center">
+        <button onclick="location.reload()"
+            class="text-mystic-400 hover:text-white border border-mystic-700 hover:border-mystic-500 px-6 py-2 rounded-xl transition">
+            다시 분석하기
+        </button>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/compatibility.js"></script>
+{% endblock %}
