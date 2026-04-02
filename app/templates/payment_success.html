@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}결제 완료 - 정밀 상세 풀이{% endblock %}
+
+{% block content %}
+<!-- 로딩 상태 -->
+<section id="confirm-loading" class="text-center py-16 md:py-20">
+    <div class="inline-block animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-4 border-pink-500 border-t-transparent"></div>
+    <p class="mt-4 text-mystic-300 text-sm md:text-base">결제를 확인하고 상세 풀이를 준비하고 있어요...</p>
+</section>
+
+<!-- 결과 -->
+<section id="result-section" class="hidden space-y-4 md:space-y-6 max-w-2xl mx-auto">
+    <div class="bg-gradient-to-br from-mystic-900/80 to-pink-900/30 border border-pink-600/30 rounded-2xl p-4 md:p-6">
+        <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+            <div>
+                <h3 class="text-base md:text-lg font-semibold bg-gradient-to-r from-pink-300 to-amber-300 bg-clip-text text-transparent">정밀 상세 풀이</h3>
+                <p class="text-mystic-400 text-xs">결제가 완료되었습니다</p>
+            </div>
+        </div>
+        <div id="interpretation-result"></div>
+    </div>
+
+    <div class="text-center pb-4">
+        <button onclick="location.href='/'"
+            class="text-mystic-400 hover:text-white border border-mystic-700 hover:border-mystic-500 px-6 py-3 rounded-xl transition active:bg-mystic-800">
+            다시 분석하기
+        </button>
+    </div>
+</section>
+
+<!-- 에러 -->
+<section id="error-section" class="hidden text-center py-16 md:py-20 max-w-lg mx-auto px-4">
+    <div class="bg-mystic-900/50 border border-red-600/30 rounded-2xl p-6 md:p-8">
+        <p class="text-red-400 text-base md:text-lg font-medium mb-2">결제 승인에 실패했어요</p>
+        <p id="error-message" class="text-mystic-400 text-sm mb-6"></p>
+        <button onclick="location.href='/'"
+            class="w-full md:w-auto bg-gradient-to-r from-mystic-600 to-pink-600 text-white font-semibold px-6 py-3.5 rounded-xl transition active:scale-[0.98]">
+            돌아가기
+        </button>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function renderInterpretation(interp, targetId) {
+    document.getElementById(targetId).innerHTML = `
+        <p class="text-base md:text-lg font-medium text-mystic-100 mb-4">${interp.summary || ''}</p>
+        <div class="space-y-4 text-sm text-mystic-200 leading-relaxed">
+            ${interp.personality ? `<div><span class="text-mystic-400 font-medium">성격 |</span> ${interp.personality}</div>` : ''}
+            ${interp.fortune_2026 ? `<div><span class="text-mystic-400 font-medium">2026년 운세 |</span> ${interp.fortune_2026}</div>` : ''}
+            ${interp.love ? `<div><span class="text-mystic-400 font-medium">연애운 |</span> ${interp.love}</div>` : ''}
+            ${interp.career ? `<div><span class="text-mystic-400 font-medium">직업운 |</span> ${interp.career}</div>` : ''}
+            ${interp.advice ? `<div class="mt-2 p-3 bg-mystic-800/50 rounded-xl text-mystic-100 font-medium">${interp.advice}</div>` : ''}
+        </div>
+    `;
+}
+
+async function confirmPayment() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paymentKey = urlParams.get('paymentKey');
+    const orderId = urlParams.get('orderId');
+    const amount = urlParams.get('amount');
+
+    if (!paymentKey || !orderId || !amount) {
+        showError('결제 정보가 올바르지 않습니다.');
+        return;
+    }
+
+    try {
+        const res = await fetch('/api/payment/confirm', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ paymentKey, orderId, amount: parseInt(amount) })
+        });
+        const data = await res.json();
+
+        document.getElementById('confirm-loading').classList.add('hidden');
+
+        if (data.success && data.interpretation) {
+            document.getElementById('result-section').classList.remove('hidden');
+            if (data.interpretation.error) {
+                document.getElementById('interpretation-result').innerHTML = `
+                    <p class="text-mystic-400 text-sm">${data.interpretation.error}</p>
+                `;
+            } else {
+                renderInterpretation(data.interpretation, 'interpretation-result');
+            }
+        } else {
+            showError(data.error || '결제 승인에 실패했습니다.');
+        }
+    } catch {
+        showError('서버에 연결할 수 없습니다.');
+    }
+}
+
+function showError(msg) {
+    document.getElementById('confirm-loading').classList.add('hidden');
+    document.getElementById('error-section').classList.remove('hidden');
+    document.getElementById('error-message').textContent = msg;
+}
+
+confirmPayment();
+</script>
+{% endblock %}

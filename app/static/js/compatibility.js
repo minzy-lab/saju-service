@@ -44,6 +44,11 @@ document.getElementById('compat-form').addEventListener('submit', async (e) => {
         document.getElementById('loading').classList.add('hidden');
         document.getElementById('results').classList.remove('hidden');
 
+        // 모바일에서 결과 영역으로 부드럽게 스크롤
+        setTimeout(() => {
+            document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+
         // 종합 점수
         document.getElementById('total-score').textContent = data.score;
         setTimeout(() => {

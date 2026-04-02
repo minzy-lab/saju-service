@@ -5,15 +5,21 @@ let savedRequestBody = null;
 document.getElementById('dont-know-hour').addEventListener('change', (e) => {
     const quiz = document.getElementById('quiz-section');
     const hourInput = document.getElementById('hour');
+    const minuteInput = document.getElementById('minute');
     if (e.target.checked) {
         quiz.classList.remove('hidden');
         hourInput.disabled = true;
         hourInput.value = '';
         hourInput.classList.add('opacity-50');
+        minuteInput.disabled = true;
+        minuteInput.value = '';
+        minuteInput.classList.add('opacity-50');
     } else {
         quiz.classList.add('hidden');
         hourInput.disabled = false;
         hourInput.classList.remove('opacity-50');
+        minuteInput.disabled = false;
+        minuteInput.classList.remove('opacity-50');
     }
 });
 
@@ -55,18 +61,20 @@ document.getElementById('analyze-form').addEventListener('submit', async (e) => 
         const quizData = await quizRes.json();
         hour = quizData.estimated_hours[0].hour;
     } else {
-        hour = parseInt(document.getElementById('hour').value);
-        if (isNaN(hour)) {
-            alert('태어난 시간을 입력해주세요.');
+        const hourVal = document.getElementById('hour').value;
+        if (hourVal === '') {
+            alert('태어난 시간을 선택해주세요.');
             return;
         }
+        hour = parseInt(hourVal);
     }
 
     document.getElementById('form-section').classList.add('hidden');
     document.getElementById('loading').classList.remove('hidden');
     document.getElementById('loading-text').textContent = '운명을 분석하고 있습니다...';
 
-    const body = { year, month, day, hour };
+    const minute = parseInt(document.getElementById('minute').value) || 0;
+    const body = { year, month, day, hour, minute };
     if (bloodType) body.blood_type = bloodType;
     savedRequestBody = body;
 
@@ -79,6 +87,11 @@ document.getElementById('analyze-form').addEventListener('submit', async (e) => 
 
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('results').classList.remove('hidden');
+
+    // 모바일에서 결과 영역으로 부드럽게 스크롤
+    setTimeout(() => {
+        document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
 
     renderSaju(data.saju);
     renderOhaeng(data.ohaeng);
@@ -98,7 +111,7 @@ document.getElementById('analyze-form').addEventListener('submit', async (e) => 
 
 function renderInterpretation(interp, targetId) {
     document.getElementById(targetId).innerHTML = `
-        <p class="text-lg font-medium text-mystic-100 mb-4">${interp.summary || ''}</p>
+        <p class="text-base md:text-lg font-medium text-mystic-100 mb-4">${interp.summary || ''}</p>
         <div class="space-y-4 text-sm text-mystic-200 leading-relaxed">
             ${interp.personality ? `<div><span class="text-mystic-400 font-medium">성격 |</span> ${interp.personality}</div>` : ''}
             ${interp.fortune_2026 ? `<div><span class="text-mystic-400 font-medium">2026년 운세 |</span> ${interp.fortune_2026}</div>` : ''}
@@ -109,38 +122,39 @@ function renderInterpretation(interp, targetId) {
     `;
 }
 
-// AI 상세 해석 버튼 클릭
+// 상세 풀이 결제 플로우
 async function requestAIInterpretation() {
     if (!savedRequestBody) return;
 
-    document.getElementById('ai-prompt').classList.add('hidden');
-    document.getElementById('ai-loading').classList.remove('hidden');
+    document.getElementById('ai-btn').disabled = true;
+    document.getElementById('ai-btn').textContent = '결제 준비 중...';
 
     try {
-        const res = await fetch('/api/analyze/full', {
+        // 1. 주문 생성
+        const orderRes = await fetch('/api/payment/order', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(savedRequestBody)
         });
-        const data = await res.json();
+        const orderData = await orderRes.json();
 
-        document.getElementById('ai-loading').classList.add('hidden');
-        document.getElementById('ai-result').classList.remove('hidden');
+        // 2. 분석 데이터를 sessionStorage에 저장 (결제 후 복원용)
+        sessionStorage.setItem('savedRequestBody', JSON.stringify(savedRequestBody));
 
-        if (data.interpretation && !data.interpretation.error) {
-            renderInterpretation(data.interpretation, 'ai-result');
-        } else {
-            const errMsg = data.interpretation?.error || 'AI 해석을 불러오지 못했어요.';
-            document.getElementById('ai-result').innerHTML = `
-                <p class="text-mystic-400 text-sm">${errMsg}</p>
-            `;
-        }
+        // 3. 토스페이먼츠 결제위젯 초기화 + 결제 요청
+        const paymentWidget = PaymentWidget(orderData.clientKey, PaymentWidget.ANONYMOUS);
+
+        paymentWidget.requestPayment({
+            orderId: orderData.orderId,
+            orderName: '정밀 상세 풀이',
+            amount: orderData.amount,
+            successUrl: window.location.origin + '/payment/success',
+            failUrl: window.location.origin + '/payment/fail',
+        });
     } catch {
-        document.getElementById('ai-loading').classList.add('hidden');
-        document.getElementById('ai-result').classList.remove('hidden');
-        document.getElementById('ai-result').innerHTML = `
-            <p class="text-mystic-400 text-sm">AI 해석 서버에 연결할 수 없습니다.</p>
-        `;
+        document.getElementById('ai-btn').disabled = false;
+        document.getElementById('ai-btn').textContent = '상세 풀이 보기';
+        alert('결제 요청에 실패했습니다. 다시 시도해주세요.');
     }
 }
 
@@ -155,9 +169,9 @@ function renderSaju(saju) {
     const colors = ['from-blue-500 to-cyan-500', 'from-green-500 to-emerald-500', 'from-amber-500 to-yellow-500', 'from-pink-500 to-rose-500'];
 
     document.getElementById('saju-pillars').innerHTML = pillars.map((p, i) => `
-        <div class="bg-mystic-800 rounded-xl p-4 border border-mystic-600/30">
-            <div class="text-xs text-mystic-400 mb-2">${p.name}</div>
-            <div class="text-2xl font-bold bg-gradient-to-b ${colors[i]} bg-clip-text text-transparent">
+        <div class="bg-mystic-800 rounded-xl p-3 md:p-4 border border-mystic-600/30">
+            <div class="text-xs text-mystic-400 mb-1.5 md:mb-2">${p.name}</div>
+            <div class="text-xl md:text-2xl font-bold bg-gradient-to-b ${colors[i]} bg-clip-text text-transparent">
                 ${p.cheongan}${p.jiji}
             </div>
         </div>
@@ -181,11 +195,11 @@ function renderOhaeng(ohaeng) {
         const count = ohaeng.counts[el.key];
         const pct = (count / maxCount) * 100;
         return `
-            <div class="flex items-center gap-3">
-                <span class="w-14 text-sm text-mystic-300">${el.name}</span>
-                <div class="flex-1 bg-mystic-800 rounded-full h-6 overflow-hidden">
+            <div class="flex items-center gap-2 md:gap-3">
+                <span class="w-12 md:w-14 text-xs md:text-sm text-mystic-300">${el.name}</span>
+                <div class="flex-1 bg-mystic-800 rounded-full h-5 md:h-6 overflow-hidden">
                     <div class="${el.color} h-full rounded-full transition-all duration-700 flex items-center justify-end pr-2"
-                         style="width: ${Math.max(pct, 8)}%">
+                         style="width: ${Math.max(pct, 12)}%">
                         <span class="text-xs font-bold text-white">${count}</span>
                     </div>
                 </div>
@@ -199,13 +213,13 @@ function renderOhaeng(ohaeng) {
 
 function renderZodiac(zodiac) {
     document.getElementById('zodiac-result').innerHTML = `
-        <div class="flex items-center gap-4 mb-3">
-            <span class="text-3xl font-bold text-mystic-100">${zodiac.sign}</span>
-            <span class="text-sm px-3 py-1 bg-mystic-800 rounded-full text-mystic-300">${zodiac.element} / ${zodiac.ruling_planet}</span>
+        <div class="flex items-center gap-3 md:gap-4 mb-3">
+            <span class="text-2xl md:text-3xl font-bold text-mystic-100">${zodiac.sign}</span>
+            <span class="text-xs md:text-sm px-2.5 md:px-3 py-1 bg-mystic-800 rounded-full text-mystic-300">${zodiac.element} / ${zodiac.ruling_planet}</span>
         </div>
         <p class="text-mystic-300 text-sm mb-3">${zodiac.personality}</p>
-        <div class="flex flex-wrap gap-2">
-            ${zodiac.keywords.map(k => `<span class="px-3 py-1 bg-mystic-800/80 rounded-full text-xs text-mystic-200">${k}</span>`).join('')}
+        <div class="flex flex-wrap gap-1.5 md:gap-2">
+            ${zodiac.keywords.map(k => `<span class="px-2.5 py-1 bg-mystic-800/80 rounded-full text-xs text-mystic-200">${k}</span>`).join('')}
         </div>
     `;
 }
@@ -214,7 +228,7 @@ function renderBloodType(bt) {
     document.getElementById('blood-type-section').classList.remove('hidden');
     document.getElementById('blood-type-result').innerHTML = `
         <div class="flex items-center gap-3 mb-3">
-            <span class="text-3xl font-bold text-red-400">${bt.type}형</span>
+            <span class="text-2xl md:text-3xl font-bold text-red-400">${bt.type}형</span>
         </div>
         <p class="text-mystic-300 text-sm mb-3">${bt.personality}</p>
         <div class="grid grid-cols-2 gap-3 text-sm">
@@ -238,11 +252,11 @@ function renderBloodType(bt) {
 function renderChineseZodiac(cz) {
     document.getElementById('zodiac-cn-result').innerHTML = `
         <div class="flex items-center gap-3 mb-3">
-            <span class="text-3xl font-bold text-amber-400">${cz.animal}띠</span>
+            <span class="text-2xl md:text-3xl font-bold text-amber-400">${cz.animal}띠</span>
         </div>
         <p class="text-mystic-300 text-sm mb-3">${cz.personality}</p>
-        <div class="flex flex-wrap gap-2 mb-3">
-            ${cz.traits.map(t => `<span class="px-3 py-1 bg-mystic-800/80 rounded-full text-xs text-mystic-200">${t}</span>`).join('')}
+        <div class="flex flex-wrap gap-1.5 md:gap-2 mb-3">
+            ${cz.traits.map(t => `<span class="px-2.5 py-1 bg-mystic-800/80 rounded-full text-xs text-mystic-200">${t}</span>`).join('')}
         </div>
         <div class="grid grid-cols-2 gap-3 text-sm">
             <div>
@@ -267,8 +281,8 @@ function renderMBTI(mbti) {
     ];
 
     document.getElementById('mbti-result').innerHTML = `
-        <div class="text-center mb-5">
-            <span class="text-4xl font-bold tracking-wider bg-gradient-to-r from-mystic-300 to-pink-300 bg-clip-text text-transparent">${mbti.type}</span>
+        <div class="text-center mb-4 md:mb-5">
+            <span class="text-3xl md:text-4xl font-bold tracking-wider bg-gradient-to-r from-mystic-300 to-pink-300 bg-clip-text text-transparent">${mbti.type}</span>
         </div>
         <div class="space-y-3">
             ${axes.map(axis => {

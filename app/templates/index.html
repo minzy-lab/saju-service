@@ -3,46 +3,86 @@
 
 {% block content %}
 <!-- 히어로 -->
-<section class="text-center py-12">
-    <h1 class="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-mystic-300 via-pink-300 to-amber-300 bg-clip-text text-transparent">
+<section class="text-center py-8 md:py-12">
+    <h1 class="text-3xl md:text-5xl font-bold mb-3 bg-gradient-to-r from-mystic-300 via-pink-300 to-amber-300 bg-clip-text text-transparent leading-tight">
         당신의 운명을 읽어드립니다
     </h1>
-    <p class="text-mystic-300 text-lg">사주 + 별자리 + 혈액형 + MBTI + 띠 — 한번에 종합 분석</p>
+    <p class="text-mystic-300 text-sm md:text-lg">사주 + 별자리 + 혈액형 + MBTI + 띠 — 한번에 종합 분석</p>
 </section>
 
 <!-- 입력 폼 -->
 <section id="form-section" class="max-w-lg mx-auto">
-    <div class="bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-6 backdrop-blur">
-        <h2 class="text-lg font-semibold mb-5 text-mystic-200">생년월일시 입력</h2>
+    <div class="bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-5 md:p-6 backdrop-blur">
+        <h2 class="text-base md:text-lg font-semibold mb-4 md:mb-5 text-mystic-200">생년월일시 입력</h2>
 
         <form id="analyze-form" class="space-y-4">
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-3 gap-2 md:gap-3">
                 <div>
                     <label class="block text-xs text-mystic-400 mb-1">출생 연도</label>
-                    <input type="number" id="year" placeholder="1995" min="1900" max="2100"
-                        class="w-full bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-2.5 text-white placeholder-mystic-500 focus:outline-none focus:border-mystic-400">
+                    <input type="number" id="year" placeholder="1995" min="1900" max="2100" inputmode="numeric"
+                        class="w-full bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-3 text-white placeholder-mystic-500 focus:outline-none focus:border-mystic-400">
                 </div>
                 <div>
                     <label class="block text-xs text-mystic-400 mb-1">월</label>
-                    <input type="number" id="month" placeholder="8" min="1" max="12"
-                        class="w-full bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-2.5 text-white placeholder-mystic-500 focus:outline-none focus:border-mystic-400">
+                    <input type="number" id="month" placeholder="8" min="1" max="12" inputmode="numeric"
+                        class="w-full bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-3 text-white placeholder-mystic-500 focus:outline-none focus:border-mystic-400">
                 </div>
                 <div>
                     <label class="block text-xs text-mystic-400 mb-1">일</label>
-                    <input type="number" id="day" placeholder="15" min="1" max="31"
-                        class="w-full bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-2.5 text-white placeholder-mystic-500 focus:outline-none focus:border-mystic-400">
+                    <input type="number" id="day" placeholder="15" min="1" max="31" inputmode="numeric"
+                        class="w-full bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-3 text-white placeholder-mystic-500 focus:outline-none focus:border-mystic-400">
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-2 md:gap-3">
+                <div>
+                    <label class="block text-xs text-mystic-400 mb-1">시</label>
+                    <select id="hour"
+                        class="w-full bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-3 text-white focus:outline-none focus:border-mystic-400">
+                        <option value="">선택</option>
+                        <option value="0">0시 (자정)</option>
+                        <option value="1">1시</option>
+                        <option value="2">2시</option>
+                        <option value="3">3시</option>
+                        <option value="4">4시</option>
+                        <option value="5">5시</option>
+                        <option value="6">6시</option>
+                        <option value="7">7시</option>
+                        <option value="8">8시</option>
+                        <option value="9">9시</option>
+                        <option value="10">10시</option>
+                        <option value="11">11시</option>
+                        <option value="12">12시 (정오)</option>
+                        <option value="13">13시</option>
+                        <option value="14">14시</option>
+                        <option value="15">15시</option>
+                        <option value="16">16시</option>
+                        <option value="17">17시</option>
+                        <option value="18">18시</option>
+                        <option value="19">19시</option>
+                        <option value="20">20시</option>
+                        <option value="21">21시</option>
+                        <option value="22">22시</option>
+                        <option value="23">23시</option>
+                    </select>
                 </div>
                 <div>
-                    <label class="block text-xs text-mystic-400 mb-1">시 (0~23)</label>
-                    <input type="number" id="hour" placeholder="14" min="0" max="23"
-                        class="w-full bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-2.5 text-white placeholder-mystic-500 focus:outline-none focus:border-mystic-400">
+                    <label class="block text-xs text-mystic-400 mb-1">분</label>
+                    <select id="minute"
+                        class="w-full bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-3 text-white focus:outline-none focus:border-mystic-400">
+                        <option value="5">0 ~ 9분</option>
+                        <option value="15">10 ~ 19분</option>
+                        <option value="25">20 ~ 29분</option>
+                        <option value="35">30 ~ 39분</option>
+                        <option value="45">40 ~ 49분</option>
+                        <option value="55">50 ~ 59분</option>
+                    </select>
                 </div>
             </div>
 
             <div>
                 <label class="block text-xs text-mystic-400 mb-1">혈액형 (선택)</label>
                 <select id="blood_type"
-                    class="w-full bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-2.5 text-white focus:outline-none focus:border-mystic-400">
+                    class="w-full bg-mystic-800 border border-mystic-600 rounded-lg px-3 py-3 text-white focus:outline-none focus:border-mystic-400">
                     <option value="">모름 / 선택안함</option>
                     <option value="A">A형</option>
                     <option value="B">B형</option>
@@ -51,7 +91,7 @@
                 </select>
             </div>
 
-            <div class="flex items-center gap-2 text-sm">
+            <div class="flex items-center gap-2 text-sm py-1">
                 <input type="checkbox" id="dont-know-hour" class="accent-mystic-500">
                 <label for="dont-know-hour" class="text-mystic-300">태어난 시간을 모르겠어요</label>
             </div>
@@ -61,7 +101,7 @@
                 <p class="text-sm text-mystic-300 font-medium">간단한 질문으로 시간을 추정해볼게요!</p>
                 <div>
                     <label class="block text-xs text-mystic-400 mb-1">형제/자매 중 몇째?</label>
-                    <select id="q-sibling" class="w-full bg-mystic-700 border border-mystic-600 rounded-lg px-3 py-2 text-white text-sm">
+                    <select id="q-sibling" class="w-full bg-mystic-700 border border-mystic-600 rounded-lg px-3 py-2.5 text-white text-sm">
                         <option value="외동">외동</option>
                         <option value="첫째">첫째</option>
                         <option value="중간">중간</option>
@@ -70,7 +110,7 @@
                 </div>
                 <div>
                     <label class="block text-xs text-mystic-400 mb-1">아침형? 저녁형?</label>
-                    <select id="q-chronotype" class="w-full bg-mystic-700 border border-mystic-600 rounded-lg px-3 py-2 text-white text-sm">
+                    <select id="q-chronotype" class="w-full bg-mystic-700 border border-mystic-600 rounded-lg px-3 py-2.5 text-white text-sm">
                         <option value="아침형">아침형</option>
                         <option value="저녁형">저녁형</option>
                         <option value="둘 다 아님">둘 다 아님</option>
@@ -78,7 +118,7 @@
                 </div>
                 <div>
                     <label class="block text-xs text-mystic-400 mb-1">첫인상이 어떻다는 말을 자주 듣나요?</label>
-                    <select id="q-impression" class="w-full bg-mystic-700 border border-mystic-600 rounded-lg px-3 py-2 text-white text-sm">
+                    <select id="q-impression" class="w-full bg-mystic-700 border border-mystic-600 rounded-lg px-3 py-2.5 text-white text-sm">
                         <option value="차가움">차가움</option>
                         <option value="따뜻함">따뜻함</option>
                         <option value="활발함">활발함</option>
@@ -87,7 +127,7 @@
                 </div>
                 <div>
                     <label class="block text-xs text-mystic-400 mb-1">의사결정 스타일은?</label>
-                    <select id="q-decision" class="w-full bg-mystic-700 border border-mystic-600 rounded-lg px-3 py-2 text-white text-sm">
+                    <select id="q-decision" class="w-full bg-mystic-700 border border-mystic-600 rounded-lg px-3 py-2.5 text-white text-sm">
                         <option value="즉흥적">즉흥적</option>
                         <option value="신중함">신중함</option>
                         <option value="상황에 따라 다름">상황에 따라 다름</option>
@@ -96,7 +136,7 @@
             </div>
 
             <button type="submit" id="submit-btn"
-                class="w-full bg-gradient-to-r from-mystic-600 to-pink-600 hover:from-mystic-500 hover:to-pink-500 text-white font-semibold py-3 rounded-xl transition transform hover:scale-[1.02] active:scale-[0.98]">
+                class="w-full bg-gradient-to-r from-mystic-600 to-pink-600 hover:from-mystic-500 hover:to-pink-500 text-white font-semibold py-3.5 rounded-xl transition transform hover:scale-[1.02] active:scale-[0.98]">
                 분석하기
             </button>
         </form>
@@ -104,79 +144,79 @@
 </section>
 
 <!-- 로딩 -->
-<section id="loading" class="hidden text-center py-20">
-    <div class="inline-block animate-spin rounded-full h-12 w-12 border-4 border-mystic-500 border-t-transparent"></div>
-    <p class="mt-4 text-mystic-300" id="loading-text">운명을 분석하고 있습니다...</p>
+<section id="loading" class="hidden text-center py-16 md:py-20">
+    <div class="inline-block animate-spin rounded-full h-10 w-10 md:h-12 md:w-12 border-4 border-mystic-500 border-t-transparent"></div>
+    <p class="mt-4 text-mystic-300 text-sm md:text-base" id="loading-text">운명을 분석하고 있습니다...</p>
 </section>
 
 <!-- 결과 -->
-<section id="results" class="hidden space-y-6 mt-8">
+<section id="results" class="hidden space-y-4 md:space-y-6 mt-6 md:mt-8 max-w-lg md:max-w-5xl mx-auto">
     <!-- 사주팔자 -->
-    <div class="bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-6">
-        <h3 class="text-lg font-semibold mb-4 text-mystic-200">사주팔자 (四柱八字)</h3>
-        <div id="saju-pillars" class="grid grid-cols-4 gap-3 text-center"></div>
-        <p id="saju-animal" class="mt-4 text-center text-mystic-300"></p>
+    <div class="bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-4 md:p-6">
+        <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4 text-mystic-200">사주팔자 (四柱八字)</h3>
+        <div id="saju-pillars" class="grid grid-cols-4 gap-2 md:gap-3 text-center"></div>
+        <p id="saju-animal" class="mt-3 text-center text-mystic-300 text-sm"></p>
     </div>
 
     <!-- 오행 분포 -->
-    <div class="bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-6">
-        <h3 class="text-lg font-semibold mb-4 text-mystic-200">오행 분석 (五行)</h3>
+    <div class="bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-4 md:p-6">
+        <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4 text-mystic-200">오행 분석 (五行)</h3>
         <div id="ohaeng-chart" class="space-y-2"></div>
-        <p id="ohaeng-summary" class="mt-4 text-sm text-mystic-300"></p>
+        <p id="ohaeng-summary" class="mt-3 text-xs md:text-sm text-mystic-300"></p>
     </div>
 
     <!-- 별자리 -->
-    <div class="bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-6">
-        <h3 class="text-lg font-semibold mb-2 text-mystic-200">별자리</h3>
+    <div class="bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-4 md:p-6">
+        <h3 class="text-base md:text-lg font-semibold mb-2 text-mystic-200">별자리</h3>
         <div id="zodiac-result"></div>
     </div>
 
     <!-- 혈액형 -->
-    <div id="blood-type-section" class="hidden bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-6">
-        <h3 class="text-lg font-semibold mb-2 text-mystic-200">혈액형 성격</h3>
+    <div id="blood-type-section" class="hidden bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-4 md:p-6">
+        <h3 class="text-base md:text-lg font-semibold mb-2 text-mystic-200">혈액형 성격</h3>
         <div id="blood-type-result"></div>
     </div>
 
     <!-- 띠 운세 -->
-    <div class="bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-6">
-        <h3 class="text-lg font-semibold mb-2 text-mystic-200">띠 운세</h3>
+    <div class="bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-4 md:p-6">
+        <h3 class="text-base md:text-lg font-semibold mb-2 text-mystic-200">띠 운세</h3>
         <div id="zodiac-cn-result"></div>
     </div>
 
     <!-- MBTI -->
-    <div class="bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-6">
-        <h3 class="text-lg font-semibold mb-4 text-mystic-200">MBTI 예측</h3>
+    <div class="bg-mystic-900/50 border border-mystic-700/50 rounded-2xl p-4 md:p-6">
+        <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4 text-mystic-200">MBTI 예측</h3>
         <div id="mbti-result"></div>
         <p class="mt-3 text-xs text-mystic-500">* 엔터테인먼트 목적이며 과학적 근거는 없습니다</p>
     </div>
 
     <!-- 무료 해석 -->
-    <div class="bg-gradient-to-br from-mystic-900/80 to-indigo-900/30 border border-mystic-600/50 rounded-2xl p-6">
-        <h3 class="text-lg font-semibold mb-4 text-mystic-200">종합 해석</h3>
+    <div class="bg-gradient-to-br from-mystic-900/80 to-indigo-900/30 border border-mystic-600/50 rounded-2xl p-4 md:p-6">
+        <h3 class="text-base md:text-lg font-semibold mb-3 md:mb-4 text-mystic-200">종합 해석</h3>
         <div id="local-interpretation"></div>
     </div>
 
     <!-- AI 상세 해석 (유료) -->
-    <div id="ai-section" class="bg-gradient-to-br from-mystic-900/80 to-pink-900/30 border border-pink-600/30 rounded-2xl p-6">
+    <div id="ai-section" class="bg-gradient-to-br from-mystic-900/80 to-pink-900/30 border border-pink-600/30 rounded-2xl p-4 md:p-6">
         <div id="ai-prompt" class="text-center">
-            <h3 class="text-lg font-semibold mb-2 bg-gradient-to-r from-pink-300 to-amber-300 bg-clip-text text-transparent">AI 상세 해석</h3>
-            <p class="text-mystic-400 text-sm mb-4">Claude AI가 당신만을 위한 깊이 있는 맞춤 해석을 제공합니다</p>
+            <h3 class="text-base md:text-lg font-semibold mb-2 bg-gradient-to-r from-pink-300 to-amber-300 bg-clip-text text-transparent">정밀 상세 풀이</h3>
+            <p class="text-mystic-400 text-xs md:text-sm mb-4">당신만의 고유한 조합을 정밀 분석하여 깊이 있는 맞춤 풀이를 제공합니다</p>
             <button id="ai-btn" onclick="requestAIInterpretation()"
-                class="bg-gradient-to-r from-pink-600 to-amber-600 hover:from-pink-500 hover:to-amber-500 text-white font-semibold px-6 py-3 rounded-xl transition transform hover:scale-[1.02] active:scale-[0.98]">
-                AI 상세 해석 보기
+                class="w-full md:w-auto bg-gradient-to-r from-pink-600 to-amber-600 hover:from-pink-500 hover:to-amber-500 text-white font-semibold px-6 py-3.5 rounded-xl transition transform hover:scale-[1.02] active:scale-[0.98]">
+                상세 풀이 보기 <span class="text-pink-200 text-sm ml-1">1,000원</span>
             </button>
         </div>
         <div id="ai-loading" class="hidden text-center py-4">
             <div class="inline-block animate-spin rounded-full h-6 w-6 border-2 border-pink-400 border-t-transparent"></div>
-            <p class="mt-2 text-mystic-400 text-sm">Claude AI가 맞춤 해석을 작성하고 있어요...</p>
+            <p class="mt-2 text-mystic-400 text-sm">정밀 분석으로 맞춤 풀이를 작성하고 있어요...</p>
         </div>
         <div id="ai-result" class="hidden"></div>
     </div>
 
     <!-- 다시하기 -->
-    <div class="text-center">
+    <div class="text-center pb-4">
         <button onclick="location.reload()"
-            class="text-mystic-400 hover:text-white border border-mystic-700 hover:border-mystic-500 px-6 py-2 rounded-xl transition">
+            class="text-mystic-400 hover:text-white border border-mystic-700 hover:border-mystic-500 px-6 py-3 rounded-xl transition active:bg-mystic-800">
             다시 분석하기
         </button>
     </div>

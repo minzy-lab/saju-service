@@ -2,10 +2,16 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#2e1065">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
     <title>{% block title %}운명 API{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/static/css/style.css">
+    <!-- 토스페이먼츠 결제위젯 SDK -->
+    <script src="https://js.tosspayments.com/v1/payment-widget"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -32,27 +38,27 @@
 </head>
 <body class="bg-mystic-950 text-white min-h-screen">
     <!-- 네비게이션 -->
-    <nav class="border-b border-mystic-800/50 backdrop-blur-sm bg-mystic-950/80 sticky top-0 z-50">
-        <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
-            <a href="/" class="text-xl font-bold bg-gradient-to-r from-mystic-300 to-pink-300 bg-clip-text text-transparent">
+    <nav class="border-b border-mystic-800/50 backdrop-blur-sm bg-mystic-950/80 sticky top-0 z-50 safe-area-top">
+        <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+            <a href="/" class="text-lg font-bold bg-gradient-to-r from-mystic-300 to-pink-300 bg-clip-text text-transparent">
                 운명 API
             </a>
-            <div class="flex gap-6 text-sm">
-                <a href="/" class="text-mystic-300 hover:text-white transition">운세 분석</a>
-                <a href="/compatibility" class="text-mystic-300 hover:text-white transition">궁합</a>
-                <a href="/docs" class="text-mystic-400 hover:text-white transition">API 문서</a>
+            <div class="flex gap-4 text-sm">
+                <a href="/" class="text-mystic-300 hover:text-white transition active:text-white">운세 분석</a>
+                <a href="/compatibility" class="text-mystic-300 hover:text-white transition active:text-white">궁합</a>
+                <a href="/docs" class="text-mystic-400 hover:text-white transition active:text-white">API 문서</a>
             </div>
         </div>
     </nav>
 
     <!-- 컨텐츠 -->
-    <main class="max-w-5xl mx-auto px-4 py-8">
+    <main class="max-w-5xl mx-auto px-4 py-6">
         {% block content %}{% endblock %}
     </main>
 
     <!-- 푸터 -->
-    <footer class="border-t border-mystic-800/50 mt-16">
-        <div class="max-w-5xl mx-auto px-4 py-6 text-center text-mystic-500 text-xs">
+    <footer class="border-t border-mystic-800/50 mt-12 safe-area-bottom">
+        <div class="max-w-5xl mx-auto px-4 py-5 text-center text-mystic-500 text-xs">
             본 서비스의 모든 분석 결과는 엔터테인먼트 목적으로 제공됩니다. 재미로 즐겨주세요!
         </div>
     </footer>

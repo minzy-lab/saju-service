@@ -33,3 +33,13 @@ async def index(request: Request):
 @app.get("/compatibility")
 async def compatibility_page(request: Request):
     return templates.TemplateResponse("compatibility.html", {"request": request})
+
+
+@app.get("/payment/success")
+async def payment_success_page(request: Request):
+    return templates.TemplateResponse("payment_success.html", {"request": request})
+
+
+@app.get("/payment/fail")
+async def payment_fail_page(request: Request):
+    return templates.TemplateResponse("payment_fail.html", {"request": request})

@@ -7,6 +7,7 @@ class AnalyzeRequest(BaseModel):
     month: int = Field(..., ge=1, le=12, description="출생 월")
     day: int = Field(..., ge=1, le=31, description="출생 일")
     hour: int = Field(..., ge=0, le=23, description="출생 시 (0~23)")
+    minute: int = Field(0, ge=0, le=59, description="출생 분 (0~59)")
     blood_type: Optional[str] = Field(None, pattern="^(A|B|O|AB)$", description="혈액형 (선택)")
 
 
@@ -27,3 +28,18 @@ class EstimateHourRequest(BaseModel):
 class CompatibilityRequest(BaseModel):
     person1: AnalyzeRequest
     person2: AnalyzeRequest
+
+
+class PaymentOrderRequest(BaseModel):
+    year: int
+    month: int
+    day: int
+    hour: int
+    minute: int = 0
+    blood_type: Optional[str] = None
+
+
+class PaymentConfirmRequest(BaseModel):
+    payment_key: str = Field(..., alias="paymentKey")
+    order_id: str = Field(..., alias="orderId")
+    amount: int

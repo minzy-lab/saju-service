@@ -1,6 +1,12 @@
+import uuid
+
 from fastapi import APIRouter
 
-from app.models.schemas import AnalyzeRequest, EstimateHourRequest, CompatibilityRequest
+from app.models.schemas import (
+    AnalyzeRequest, EstimateHourRequest, CompatibilityRequest,
+    PaymentOrderRequest, PaymentConfirmRequest,
+)
+from app.core.payment import create_order, confirm_payment, get_order, PRICE, TOSS_CLIENT_KEY
 from app.core.saju import calculate_saju
 from app.core.ohaeng import analyze_ohaeng
 from app.core.zodiac import analyze_zodiac
@@ -111,3 +117,38 @@ async def compatibility(req: CompatibilityRequest):
     compat["summary"] = summary
 
     return compat
+
+
+# ── 결제 ──
+
+@router.post("/payment/order")
+async def payment_order(req: PaymentOrderRequest):
+    """주문 생성."""
+    order_id = f"saju_{uuid.uuid4().hex[:12]}"
+    body = req.model_dump()
+    order = create_order(order_id, PRICE, body)
+    return {
+        "orderId": order["order_id"],
+        "amount": order["amount"],
+        "clientKey": TOSS_CLIENT_KEY,
+    }
+
+
+@router.post("/payment/confirm")
+async def payment_confirm(req: PaymentConfirmRequest):
+    """결제 승인."""
+    result = await confirm_payment(req.payment_key, req.order_id, req.amount)
+    if result.get("error"):
+        return {"success": False, "error": result["error"]}
+
+    # 승인 성공 → 주문에 저장된 분석 데이터로 AI 해석
+    order = get_order(req.order_id)
+    if order:
+        body = order["analysis_body"]
+        analyze_req = AnalyzeRequest(**body)
+        analysis = _build_analysis(analyze_req)
+        interpretation = await interpret_full_ai(analysis)
+        order["status"] = "INTERPRETED"
+        return {"success": True, "interpretation": interpretation}
+
+    return {"success": True, "interpretation": None}

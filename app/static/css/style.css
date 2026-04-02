@@ -1,18 +1,24 @@
 /* 커스텀 스타일 */
 body {
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: 100%;
+    overscroll-behavior-y: none;
 }
 
-/* 스크롤바 */
-::-webkit-scrollbar {
-    width: 6px;
-}
-::-webkit-scrollbar-track {
-    background: #2e1065;
-}
-::-webkit-scrollbar-thumb {
-    background: #6d28d9;
-    border-radius: 3px;
+/* 스크롤바 (데스크톱) */
+@media (min-width: 768px) {
+    ::-webkit-scrollbar {
+        width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #2e1065;
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #6d28d9;
+        border-radius: 3px;
+    }
 }
 
 /* 인풋 숫자 화살표 숨기기 */
@@ -23,4 +29,98 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 input[type="number"] {
     -moz-appearance: textfield;
+}
+
+/* ===== 모바일 최적화 ===== */
+
+/* iOS input zoom 방지 - 16px 미만이면 iOS가 자동 확대함 */
+@media (max-width: 767px) {
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}
+
+/* 터치 타겟 최소 44px 보장 (Apple HIG 기준) */
+@media (max-width: 767px) {
+    button,
+    a,
+    select,
+    input[type="checkbox"] {
+        min-height: 44px;
+    }
+
+    input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+    }
+
+    select {
+        min-height: 44px;
+    }
+}
+
+/* 탭 하이라이트 제거 + 터치 최적화 */
+* {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button, a {
+    touch-action: manipulation;
+}
+
+/* Safe area 대응 (노치/다이나믹 아일랜드/홈바) */
+.safe-area-top {
+    padding-top: env(safe-area-inset-top);
+}
+
+.safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* 부드러운 스크롤 */
+html {
+    scroll-behavior: smooth;
+}
+
+/* 모바일에서 오버스크롤 배경색 */
+html, body {
+    background-color: #2e1065;
+}
+
+/* 모바일 select 스타일 개선 */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a78bfa' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 32px;
+}
+
+/* 포커스 시 아웃라인 모바일 최적화 */
+input:focus,
+select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
+}
+
+/* 로딩 스피너 모바일 크기 조정 */
+@media (max-width: 767px) {
+    .animate-spin {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+}
+
+/* 카드 내부 텍스트 모바일에서 가독성 개선 */
+@media (max-width: 767px) {
+    .leading-relaxed {
+        line-height: 1.8;
+    }
 }
