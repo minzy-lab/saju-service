@@ -3,50 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="theme-color" content="#2e1065">
+    <meta name="theme-color" content="#ffffff">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="format-detection" content="telephone=no">
     <title>{% block title %}운명 API{% endblock %}</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/static/css/style.css">
     <!-- 토스페이먼츠 결제위젯 SDK -->
     <script src="https://js.tosspayments.com/v1/payment-widget"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        mystic: {
-                            50: '#f5f3ff',
-                            100: '#ede9fe',
-                            200: '#ddd6fe',
-                            300: '#c4b5fd',
-                            400: '#a78bfa',
-                            500: '#8b5cf6',
-                            600: '#7c3aed',
-                            700: '#6d28d9',
-                            800: '#5b21b6',
-                            900: '#4c1d95',
-                            950: '#2e1065',
-                        }
-                    }
-                }
-            }
-        }
-    </script>
 </head>
-<body class="bg-mystic-950 text-white min-h-screen">
+<body class="bg-slate-50 text-slate-800 min-h-screen">
     <!-- 네비게이션 -->
-    <nav class="border-b border-mystic-800/50 backdrop-blur-sm bg-mystic-950/80 sticky top-0 z-50 safe-area-top">
+    <nav class="border-b border-slate-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50 safe-area-top">
         <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-            <a href="/" class="text-lg font-bold bg-gradient-to-r from-mystic-300 to-pink-300 bg-clip-text text-transparent">
+            <a href="/" class="text-lg font-bold text-blue-600">
                 운명 API
             </a>
-            <div class="flex gap-4 text-sm">
-                <a href="/" class="text-mystic-300 hover:text-white transition active:text-white">운세 분석</a>
-                <a href="/compatibility" class="text-mystic-300 hover:text-white transition active:text-white">궁합</a>
-                <a href="/docs" class="text-mystic-400 hover:text-white transition active:text-white">API 문서</a>
+            <div class="flex items-center gap-4 text-sm">
+                <a href="/" class="text-slate-500 hover:text-blue-600 transition">운세 분석</a>
+                <a href="/daily" class="text-slate-500 hover:text-blue-600 transition">오늘의 추천</a>
+                <a href="/compatibility" class="text-slate-500 hover:text-blue-600 transition">궁합</a>
+                <a href="/docs" class="text-slate-400 hover:text-blue-600 transition">API 문서</a>
+
+                {% if user %}
+                <div class="flex items-center gap-2 ml-2 pl-4 border-l border-slate-200">
+                    {% if user.profile_image %}
+                    <img src="{{ user.profile_image }}" alt="" class="w-7 h-7 rounded-full object-cover">
+                    {% endif %}
+                    <span class="text-slate-700 text-sm hidden md:inline">{{ user.nickname }}</span>
+                    <a href="/auth/logout" class="text-slate-400 hover:text-red-500 text-xs transition">로그아웃</a>
+                </div>
+                {% else %}
+                <a href="/login" class="ml-2 pl-4 border-l border-slate-200 text-blue-600 hover:text-blue-700 transition font-medium">로그인</a>
+                {% endif %}
             </div>
         </div>
     </nav>
@@ -57,8 +47,8 @@
     </main>
 
     <!-- 푸터 -->
-    <footer class="border-t border-mystic-800/50 mt-12 safe-area-bottom">
-        <div class="max-w-5xl mx-auto px-4 py-5 text-center text-mystic-500 text-xs">
+    <footer class="border-t border-slate-200 mt-12 safe-area-bottom">
+        <div class="max-w-5xl mx-auto px-4 py-5 text-center text-slate-400 text-xs">
             본 서비스의 모든 분석 결과는 엔터테인먼트 목적으로 제공됩니다. 재미로 즐겨주세요!
         </div>
     </footer>

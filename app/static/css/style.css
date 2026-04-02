@@ -13,10 +13,10 @@ body {
         width: 6px;
     }
     ::-webkit-scrollbar-track {
-        background: #2e1065;
+        background: #f8fafc;
     }
     ::-webkit-scrollbar-thumb {
-        background: #6d28d9;
+        background: #cbd5e1;
         border-radius: 3px;
     }
 }
@@ -87,9 +87,9 @@ html {
     scroll-behavior: smooth;
 }
 
-/* 모바일에서 오버스크롤 배경색 */
+/* 오버스크롤 배경색 */
 html, body {
-    background-color: #2e1065;
+    background-color: #f8fafc;
 }
 
 /* 모바일 select 스타일 개선 */
@@ -97,17 +97,17 @@ select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23a78bfa' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2394a3b8' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 12px center;
     padding-right: 32px;
 }
 
-/* 포커스 시 아웃라인 모바일 최적화 */
+/* 포커스 시 아웃라인 */
 input:focus,
 select:focus {
     outline: none;
-    box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.3);
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
 /* 로딩 스피너 모바일 크기 조정 */

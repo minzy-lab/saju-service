@@ -3,22 +3,22 @@
 
 {% block content %}
 <section class="text-center py-16 md:py-20 max-w-lg mx-auto px-4">
-    <div class="bg-mystic-900/50 border border-red-600/30 rounded-2xl p-6 md:p-8">
-        <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-red-500/20 flex items-center justify-center mx-auto mb-4">
-            <svg class="w-7 h-7 md:w-8 md:h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <div class="bg-white border border-red-200 rounded-2xl p-6 md:p-8 shadow-sm">
+        <div class="w-14 h-14 md:w-16 md:h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4">
+            <svg class="w-7 h-7 md:w-8 md:h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
         </div>
-        <h2 class="text-lg md:text-xl font-semibold text-red-400 mb-2">결제에 실패했어요</h2>
-        <p id="error-message" class="text-mystic-400 text-sm mb-2"></p>
-        <p id="error-code" class="text-mystic-500 text-xs mb-6"></p>
+        <h2 class="text-lg md:text-xl font-semibold text-red-500 mb-2">결제에 실패했어요</h2>
+        <p id="error-message" class="text-slate-500 text-sm mb-2"></p>
+        <p id="error-code" class="text-slate-400 text-xs mb-6"></p>
         <div class="flex flex-col md:flex-row gap-3 justify-center">
             <button onclick="history.back()"
-                class="w-full md:w-auto bg-gradient-to-r from-pink-600 to-amber-600 text-white font-semibold px-6 py-3.5 rounded-xl transition active:scale-[0.98]">
+                class="w-full md:w-auto bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3.5 rounded-xl transition active:scale-[0.98]">
                 다시 시도하기
             </button>
             <button onclick="location.href='/'"
-                class="w-full md:w-auto text-mystic-400 hover:text-white border border-mystic-700 hover:border-mystic-500 px-6 py-3.5 rounded-xl transition active:bg-mystic-800">
+                class="w-full md:w-auto text-slate-500 hover:text-blue-600 border border-slate-300 hover:border-blue-400 px-6 py-3.5 rounded-xl transition">
                 메인으로
             </button>
         </div>

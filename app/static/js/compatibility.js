@@ -57,10 +57,10 @@ document.getElementById('compat-form').addEventListener('submit', async (e) => {
 
         // 상세 점수
         const details = [
-            { label: '사주 궁합', data: data.details.saju_compatibility, color: 'bg-purple-500' },
-            { label: '별자리 궁합', data: data.details.zodiac_compatibility, color: 'bg-blue-500' },
+            { label: '사주 궁합', data: data.details.saju_compatibility, color: 'bg-blue-500' },
+            { label: '별자리 궁합', data: data.details.zodiac_compatibility, color: 'bg-indigo-500' },
             { label: '띠 궁합', data: data.details.chinese_zodiac_compatibility, color: 'bg-amber-500' },
-            { label: '혈액형 궁합', data: data.details.blood_type_compatibility, color: 'bg-red-500' },
+            { label: '혈액형 궁합', data: data.details.blood_type_compatibility, color: 'bg-red-400' },
         ];
 
         document.getElementById('detail-scores').innerHTML = details.map(d => {
@@ -69,13 +69,13 @@ document.getElementById('compat-form').addEventListener('submit', async (e) => {
             return `
                 <div>
                     <div class="flex justify-between text-sm mb-1">
-                        <span class="text-mystic-300">${d.label}</span>
-                        <span class="text-mystic-200 font-medium">${score}점</span>
+                        <span class="text-slate-600">${d.label}</span>
+                        <span class="text-slate-800 font-medium">${score}점</span>
                     </div>
-                    <div class="h-4 bg-mystic-800 rounded-full overflow-hidden">
+                    <div class="h-4 bg-slate-100 rounded-full overflow-hidden">
                         <div class="${d.color} h-full rounded-full transition-all duration-700" style="width:${score}%"></div>
                     </div>
-                    <p class="text-xs text-mystic-500 mt-1">${d.data.comment}</p>
+                    <p class="text-xs text-slate-400 mt-1">${d.data.comment}</p>
                 </div>
             `;
         }).join('');

@@ -1,7 +1,8 @@
 import uuid
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Request, Depends
 
+from app.dependencies import require_login
 from app.models.schemas import (
     AnalyzeRequest, EstimateHourRequest, CompatibilityRequest,
     PaymentOrderRequest, PaymentConfirmRequest,
@@ -16,6 +17,7 @@ from app.core.mbti_predictor import predict_mbti
 from app.core.hour_estimator import estimate_birth_hour
 from app.core.compatibility import analyze_compatibility
 from app.core.interpreter import interpret_full, interpret_full_ai, interpret_compatibility
+from app.core.daily import get_daily_recommendation
 
 router = APIRouter(prefix="/api")
 
@@ -60,8 +62,8 @@ async def analyze(req: AnalyzeRequest):
 
 
 @router.post("/analyze/full")
-async def analyze_full(req: AnalyzeRequest):
-    """전체 분석 + AI 상세 해석 (유료)."""
+async def analyze_full(req: AnalyzeRequest, request: Request, user: dict = Depends(require_login)):
+    """전체 분석 + AI 상세 해석 (유료, 로그인 필요)."""
     analysis = _build_analysis(req)
     interpretation = await interpret_full_ai(analysis)
     analysis["interpretation"] = interpretation
@@ -102,6 +104,12 @@ async def estimate_hour(req: EstimateHourRequest):
     return {"estimated_hours": results}
 
 
+@router.post("/daily")
+async def daily(req: AnalyzeRequest):
+    """사주 기반 오늘의 추천."""
+    return get_daily_recommendation(req.year, req.month, req.day, req.hour)
+
+
 @router.post("/compatibility")
 async def compatibility(req: CompatibilityRequest):
     """두 사람 궁합 분석."""
@@ -122,8 +130,8 @@ async def compatibility(req: CompatibilityRequest):
 # ── 결제 ──
 
 @router.post("/payment/order")
-async def payment_order(req: PaymentOrderRequest):
-    """주문 생성."""
+async def payment_order(req: PaymentOrderRequest, request: Request, user: dict = Depends(require_login)):
+    """주문 생성 (로그인 필요)."""
     order_id = f"saju_{uuid.uuid4().hex[:12]}"
     body = req.model_dump()
     order = create_order(order_id, PRICE, body)
@@ -135,8 +143,8 @@ async def payment_order(req: PaymentOrderRequest):
 
 
 @router.post("/payment/confirm")
-async def payment_confirm(req: PaymentConfirmRequest):
-    """결제 승인."""
+async def payment_confirm(req: PaymentConfirmRequest, request: Request, user: dict = Depends(require_login)):
+    """결제 승인 (로그인 필요)."""
     result = await confirm_payment(req.payment_key, req.order_id, req.amount)
     if result.get("error"):
         return {"success": False, "error": result["error"]}
